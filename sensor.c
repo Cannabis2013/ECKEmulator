@@ -4,6 +4,7 @@
 
 int getNextData(FILE *file)
 {
+
    return 0; // return sensor value
 }
 

@@ -1,3 +1,7 @@
 *.pro
 *.pro.*
 *.autosave
+*.stash
+Makefile
+Makefile.*
+debug/
