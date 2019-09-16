@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int getNextData(FILE *_file,char* _buf, int _lookAhead)
+int* getNextData(FILE *_file,char* _buf, int _lookAhead)
 {
 
 }
@@ -31,10 +31,9 @@ char *readLine(FILE *_file,int* _lineSize)
     fsetpos(_file,&_cPos);
 
     char* _line = malloc(_buffSize);
-    char _buff;
     int _index = 0;
-    while (_index < _buffSize && (_buff = fgetc(_file)) != EOF)
-        _line[_index++] = _buff;
+    while (_index < _buffSize)
+        _line[_index++] = fgetc(_file);
 
     *_lineSize = _buffSize;
 
@@ -42,4 +41,24 @@ char *readLine(FILE *_file,int* _lineSize)
     _cPos++;
     fsetpos(_file,&_cPos);
     return _line;
+}
+
+int toInteger(char *_data, int total)
+{
+    int multi = 1;
+    if(_data[0] == '-')
+    {
+        _data[0] = 48;
+        multi = -1;
+    }
+
+    int base = 1;
+    int result = 0;
+    for (int var = total - 1; var >= 0; --var) {
+        int c = _data[var] - 48;
+        result += c * base;
+        base *= 10;
+    }
+
+    return result * multi;
 }

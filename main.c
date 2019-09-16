@@ -16,20 +16,9 @@ int main()
     file = openfile("ECG.txt");         // Read Data from Sensor
     int total = 0;
     char* _line = readLine(file,&total);
+    int integer = toInteger(_line,total);
 
-    for (int var = 0; var < total; ++var) {
-        printf("%c",_line[var]);
-    }
-
-    printf("\n");
-
-    _line = readLine(file,&total);
-
-    for (int var = 0; var < total; ++var) {
-        printf("%c",_line[var]);
-    }
-
-    printf("\n");
+    printf("%d",integer);
 
     lowPassFilter();            // Filter Data
                                 

@@ -9,7 +9,9 @@
 
 FILE* openfile(const char* filename);
 
-int getNextData(FILE *_file, char *_buf, int _lookAhead);
+int *getNextData(FILE *_file, char *_buf, int _lookAhead);
+
+int toInteger(char* _data, int total);
 
 char* readLine(FILE *_file, int *_lineSize);
 
