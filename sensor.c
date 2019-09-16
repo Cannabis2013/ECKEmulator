@@ -17,7 +17,7 @@ int* getNextData(FILE *_file, int _lookAhead,int *total)
     }
 
     if(*total < _lookAhead)
-        return malloc((unsigned int)*total * sizeof (int));
+        return malloc((unsigned int) (*total) * sizeof (int));
 
     return result;
 }
