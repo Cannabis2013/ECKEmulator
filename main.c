@@ -14,7 +14,7 @@ int main()
 	FILE *file;                  // Pointer to a file object
 	file = openfile("ECG.txt");
 
-    getNextData(file);          // Read Data from Sensor
+    getNextData(file);         // Read Data from Sensor
                                 
     lowPassFilter();            // Filter Data
                                 
