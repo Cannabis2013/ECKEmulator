@@ -9,6 +9,8 @@
 
 FILE* openfile(const char* filename);
 
-int getNextData(FILE *file);
+int getNextData(FILE *_file, char *_buf, int _lookAhead);
+
+char* readLine(FILE *_file, int *_lineSize);
 
 #endif // SENSOR_H

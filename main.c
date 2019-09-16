@@ -8,39 +8,33 @@
 // The functions and object predefined are just for inspiration.
 // Please change orden,names arguments to fit your solution.
 
-void readFile(FILE *file)
-{
-    char ch;
-    printf("%d",file->_bufsiz);
-
-    while ((ch = fgetc(file)) != EOF) {
-        printf("%c",ch);
-    }
-    printf("\n");
-
-}
-
 int main()
 {
 
     QRS_params qsr_params;       // Instance of the made avaiable through: #include "qsr.h"
 	FILE *file;                  // Pointer to a file object
-	file = openfile("ECG.txt");
+    file = openfile("ECG.txt");         // Read Data from Sensor
+    int total = 0;
+    char* _line = readLine(file,&total);
 
-    readFile(file);
+    for (int var = 0; var < total; ++var) {
+        printf("%c",_line[var]);
+    }
 
-    fclose(file);
+    printf("\n");
 
-    /*
+    _line = readLine(file,&total);
 
-    getNextData(file);         // Read Data from Sensor
-                                
+    for (int var = 0; var < total; ++var) {
+        printf("%c",_line[var]);
+    }
+
+    printf("\n");
+
     lowPassFilter();            // Filter Data
                                 
     peakDetection(&qsr_params); // Perform Peak Detection
-    */
 
 
-
-	return 0;
+    return fclose(file);
 }
