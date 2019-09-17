@@ -63,6 +63,16 @@ char *readLine(FILE *_file,int* _lineSize)
     return _line;
 }
 
+#elif unix
+
+char *readLine(FILE *_file,int* _lineSize)
+{
+    char* _line = NULL;
+    getLine(&_line,&_lineSize,_file);
+
+    return _line;
+}
+
 #endif
 
 int toInteger(char *_data, int total)
