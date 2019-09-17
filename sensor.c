@@ -1,6 +1,4 @@
 #include "sensor.h"
-#include <stdio.h>
-#include <stdlib.h>
 
 int getNextData(FILE *_file, int *total)
 {
@@ -53,16 +51,20 @@ char *readLine(FILE *_file,int* _lineSize)
     return _line;
 }
 
-#elif linux
-
+#elif defined (linux)
 char *readLine(FILE *_file,int* _lineSize)
 {
     char* _line = NULL;
-    getLine(&_line,&_lineSize,_file);
+    size_t _line_Buff_Size = 0;
+    *_lineSize = (int) getline(&_line,&_line_Buff_Size,_file);
 
-    return _line;
+    char* _result = malloc((unsigned int) *_lineSize - 1);
+    for (int var = 0; var < *_lineSize - 1; ++var)
+       _result[var] = _line[var];
+    *_lineSize = *_lineSize - 1;
+    free(_line);
+    return _result;
 }
-
 #elif unix
 
 char *readLine(FILE *_file,int* _lineSize)
@@ -75,6 +77,7 @@ char *readLine(FILE *_file,int* _lineSize)
 
 #endif
 
+#ifdef WIN64
 int toInteger(char *_data, int total)
 {
     int multi = 1;
@@ -94,3 +97,25 @@ int toInteger(char *_data, int total)
 
     return result * multi;
 }
+#elif defined (linux)
+int toInteger(char *_data, int total)
+{
+    int multi = 1;
+    if(_data[0] == '-')
+    {
+        _data[0] = 48;
+        multi = -1;
+    }
+
+    int base = 1;
+    int result = 0;
+    for (int var = total - 1; var >= 0; --var) {
+        int c = _data[var] - 48;
+        result += c * base;
+        base *= 10;
+    }
+
+    return result * multi;
+}
+#endif
+
