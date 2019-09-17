@@ -45,11 +45,18 @@ char *readLine(FILE *_file,int* _lineSize)
 
     *_lineSize = _buffSize;
 
+#ifdef linux
+    fgetc(_file);
+#elif WIN64
     fgetpos(_file,&_cPos);
     _cPos++;
     _cPos++;
     fsetpos(_file,&_cPos);
     return _line;
+#elif unix
+    fgetc(_file); // I'm not quite sure this is the macro for the OSX environment. It has to be tested by David.
+#endif
+
 }
 
 int toInteger(char *_data, int total)
