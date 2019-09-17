@@ -15,12 +15,16 @@ int main()
 	FILE *file;                  // Pointer to a file object
     file = openfile("ECG.txt");         // Read Data from Sensor
 
-    int total = 0;
-    int* _values = getNextData(file,4,&total);
+    int total = 1;
 
-    for (int var = 0; var < total; ++var) {
-        printf("%d",_values[var]);
-        printf("\n");
+    while (total != 0)
+    {
+        int value = getNextData(file,&total);
+        if(total != 0)
+        {
+            printf("%d",value);
+            printf("\n");
+        }
     }
 
     lowPassFilter();            // Filter Data

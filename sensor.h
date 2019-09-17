@@ -9,7 +9,7 @@
 
 FILE* openfile(const char* filename);
 
-int *getNextData(FILE *_file, int _lookAhead, int *total);
+int getNextData(FILE *_file, int *total);
 
 int toInteger(char* _data, int total);
 
