@@ -3,9 +3,10 @@
 
 #include <math.h>
 
-// Feel free to change return statement and arguments
+
+int filter(int *_x_Seq,int xTotal,int *_y_Seq, int yTotal);
+
 void lowPassFilter(void);
 
-// Implement additional filters
  
 #endif // FILTERS_H
