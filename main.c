@@ -10,17 +10,18 @@
 
 int main()
 {
-
     QRS_params qsr_params;       // Instance of the made avaiable through: #include "qsr.h"
 	FILE *file;                  // Pointer to a file object
     file = openfile("ECG.txt");         // Read Data from Sensor
 
+    int _overhead = 12;
+    int *_y_Buffer = NULL;
+    if(!(_y_Buffer = malloc((unsigned) _overhead)))
+        return 0;
 
-    int _overhead = 5;
     int x = 0;
     while (_overhead)
     {
-
         int _total = 1;
         int _y = getNextData(file,&_total);
         if(_total == 0)
