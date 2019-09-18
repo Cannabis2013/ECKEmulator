@@ -11,7 +11,7 @@ int main()
     file = openfile("ECG.txt");         // Read Data from Sensor
 
     int _unfiltered_Buffer_Size = 12;
-    int delay = _unfiltered_Buffer_Size;
+    int delay = 6;
     int _overhead = delay;
     int *_unfiltered_Buffer = malloc((unsigned) _unfiltered_Buffer_Size*sizeof (int));
     int _filtered_Buffer_Size = 31;
@@ -26,17 +26,9 @@ int main()
         int _line_Size = 1;
         int _filtered_Value = 0;
         // Initializing buffer array
-        if(delay > 0)
+        if(delay >= 0)
         {
             appendToArray(_unfiltered_Buffer,_unfiltered_Buffer_Size,getNextData(file,&_line_Size));
-
-            if(t > 5)
-            {
-                lowPassFilter(_unfiltered_Buffer,_filtered_Buffer,_filtered_Buffer_Size,&_filtered_Value);
-                appendToArray(_filtered_Buffer,_filtered_Buffer_Size,_filtered_Value);
-                printf("%d",_filtered_Value);
-                printf("\n");
-            }
             delay--;
         }
         else

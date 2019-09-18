@@ -7,10 +7,6 @@ int filter(int *_unfiltered, int _delay, int *_filtered, int filteredSize,int _t
     int _filtered_Value = 0;
     lowPassFilter(_unfiltered,_filtered,filteredSize,&_filtered_Value);
     appendToArray(_filtered,filteredSize,_filtered_Value);
-    if(_t > 31)
-    {
-        // TODO: Implement HP filter
-    }
     return _filtered_Value;
 }
 
