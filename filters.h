@@ -4,9 +4,9 @@
 #include <math.h>
 
 
-int filter(int *_x_Seq,int xTotal,int *_y_Seq, int yTotal);
+int filter(int *_unfiltered, int _unfiltered_Size, int* _filtered, int filteredSize);
 
-void lowPassFilter(void);
+void lowPassFilter(int *_unfiltered, int _unfilteredSize, int *_filtered, int _filtered_Size, int *result);
 
  
 #endif // FILTERS_H

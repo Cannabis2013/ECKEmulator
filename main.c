@@ -3,7 +3,7 @@
 #include "qsr.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "QueueManipulator.h"
+#include "arraymanipulator.h"
 
 // Main function for organizing the program execution.
 // The functions and object predefined are just for inspiration.
@@ -15,12 +15,14 @@ int main()
 	FILE *file;                  // Pointer to a file object
     file = openfile("ECG.txt");         // Read Data from Sensor
 
-    int delay = 11;
+    int delay = 31;
     int _overhead = delay;
-    int* _x_Buffer = NULL;
-    int *_y_Buffer = NULL;
-    if(!(_y_Buffer = malloc((unsigned) _overhead)) ||
-            !(_x_Buffer = malloc((unsigned)_overhead)))
+    int* _t_Buffer = NULL;
+    int *_unfilt_Buffer = NULL;
+    int *_filt_Buffer = malloc(2);
+
+    if(!(_unfilt_Buffer = malloc((unsigned) _overhead)) ||
+            !(_t_Buffer = malloc((unsigned)_overhead)))
         return 0;
 
     int x = 0;
@@ -28,18 +30,16 @@ int main()
     {
         int _y = 0;
         int _total = 1;
+        // Initializing buffer array
         if(delay >= 0)
         {
-            _x_Buffer[delay] = x;
-            _y_Buffer[delay] = getNextData(file,&_total);
+            _t_Buffer[_overhead - delay] = x;
+            _unfilt_Buffer[_overhead - delay] = getNextData(file,&_total);
 
             delay--;
         }
         else
         {
-            // TODO: Do operations
-
-            _y = takeFirst(_y_Buffer,delay,getNextData(file,&_total));
 
 
         }
