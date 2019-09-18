@@ -26,7 +26,7 @@ int main()
 
         return 0;
 
-    int x = 0;
+    int t = 0;
     while (_overhead >= 0)
     {
         int _y = 0;
@@ -34,17 +34,21 @@ int main()
         // Initializing buffer array
         if(delay >= 0)
         {
-            _t_Buffer[_overhead - delay] = x;
+            _t_Buffer[_overhead - delay] = t;
             _unfilt_Buffer[_overhead - delay] = getNextData(file,&_total);
 
             delay--;
         }
         else
         {
+            int _filtered_Val = filter(_unfilt_Buffer,delay,_filt_Buffer,delay);
+            insert(_filt_Buffer,2,_filtered_Val);
+
         }
 
+        insert(_t_Buffer,delay,++t);
+        insert(_unfilt_Buffer,delay,getNextData(file,&_total));
 
-        x++;
         if(_total == 0)
             _overhead--;
     }
