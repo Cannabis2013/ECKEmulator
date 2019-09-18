@@ -56,14 +56,13 @@ char *readLine(FILE *_file,int* _lineSize)
     char* _line = NULL;
     size_t _line_Buff_Size = 0;
     *_lineSize = (int) getline(&_line,&_line_Buff_Size,_file);
-
     char* _result = malloc((unsigned int) *_lineSize - 1);
     for (int var = 0; var < *_lineSize - 1; ++var)
        _result[var] = _line[var];
     *_lineSize =  *_lineSize <= 0 ? 0 : *_lineSize - 1;
     return _result;
 }
-#elif __APPLE_CC__
+#elif defined(__APPLE_CC__)
 
 char *readLine(FILE *_file,int* _lineSize)
 {

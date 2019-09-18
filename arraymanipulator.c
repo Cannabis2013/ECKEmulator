@@ -1,9 +1,18 @@
 #include "arraymanipulator.h"
 
-void insert(int *_Seq, int total, int _value)
+void appendToArray(int *_seq, int total, int _value)
 {
     for (int var = 0; var < total - 1; ++var)
-        _Seq[var] = _Seq[var + 1];
+    {
+        int val = _seq[var + 1];
+        _seq[var] = val;
+    }
 
-    _Seq[total - 1] = _value;
+    _seq[total - 1] = _value;
+}
+
+void initializeArray(int *_seq, int total, int _initial_Value)
+{
+    for (int var = 0; var < total; ++var)
+        _seq[var] = _initial_Value;
 }
