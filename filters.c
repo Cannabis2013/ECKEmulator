@@ -20,5 +20,5 @@ void lowPassFilter(int *_unfiltered, int _unfilteredSize,
     int _unfiltered_Sum = _unfiltered[11]
             - _unfiltered[5] + _unfiltered[0];
 
-    int _filtered_Value = _filtered_Sum + _unfiltered_Sum/32;
+    *result = _filtered_Sum + _unfiltered_Sum/32;
 }
