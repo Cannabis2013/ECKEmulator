@@ -14,7 +14,7 @@ int main()
 	FILE *file;                  // Pointer to a file object
     file = openfile("ECG.txt");         // Read Data from Sensor
 
-    int _overhead = 1;
+    int _overhead = 12;
     int* _x_Buffer = NULL;
     int *_y_Buffer = NULL;
     if(!(_y_Buffer = malloc((unsigned) _overhead)) ||
@@ -28,10 +28,6 @@ int main()
         int _y = getNextData(file,&_total);
         if(_total == 0)
             _overhead--;
-
-        printf("%d",_y);
-        printf("\n");
-
         x++;
     }
 
