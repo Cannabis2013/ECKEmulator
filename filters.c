@@ -17,10 +17,4 @@ void lowPassFilter(int *_unfiltered, int _unfilteredSize,
             - _unfiltered[_unfilteredSize - 7] + _unfiltered[0];
 
     int _filtered_Value = _filtered_Sum + _unfiltered_Sum/32;
-
-}
-
-int filter(int *_x_Seq, int xTotal, int *_y_Seq, int yTotal)
-{
-
 }
