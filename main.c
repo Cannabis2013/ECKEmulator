@@ -48,9 +48,6 @@ int main()
         if(_total == 0)
             _overhead--;
     }
-
-    lowPassFilter();           // Filter Data
-                                
     peakDetection(&qsr_params); // Perform Peak Detection
 
 
