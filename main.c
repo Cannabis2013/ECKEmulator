@@ -15,8 +15,10 @@ int main()
     file = openfile("ECG.txt");         // Read Data from Sensor
 
     int _overhead = 12;
+    int* _x_Buffer = NULL;
     int *_y_Buffer = NULL;
-    if(!(_y_Buffer = malloc((unsigned) _overhead)))
+    if(!(_y_Buffer = malloc((unsigned) _overhead)) ||
+            !(_x_Buffer = malloc((unsigned)_overhead)))
         return 0;
 
     int x = 0;
