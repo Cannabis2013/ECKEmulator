@@ -3,7 +3,7 @@
 #include "qsr.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "arraymanipulator.h"
+
 
 // Main function for organizing the program execution.
 // The functions and object predefined are just for inspiration.
@@ -15,11 +15,12 @@ int main()
 	FILE *file;                  // Pointer to a file object
     file = openfile("ECG.txt");         // Read Data from Sensor
 
-    int delay = 31;
+    int delay = 12;
     int _overhead = delay;
     int* _t_Buffer = NULL;
     int *_unfilt_Buffer = NULL;
     int *_filt_Buffer = malloc(2);
+    int _filter_Buffer_Size = 31;
 
     if(!(_unfilt_Buffer = malloc((unsigned) _overhead)) ||
             !(_t_Buffer = malloc((unsigned)_overhead)))
@@ -32,7 +33,7 @@ int main()
         int _y = 0;
         int _total = 1;
         // Initializing buffer array
-        if(delay >= 0)
+        if(delay > 0)
         {
             _t_Buffer[_overhead - delay] = t;
             _unfilt_Buffer[_overhead - delay] = getNextData(file,&_total);
@@ -44,7 +45,6 @@ int main()
             int _filtered_Val = filter(_unfilt_Buffer,delay,_filt_Buffer,delay);
             printf("d",_filtered_Val);
             printf("\n");
-            insert(_filt_Buffer,2,_filtered_Val);
 
         }
 
