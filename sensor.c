@@ -61,7 +61,7 @@ char *readLine(FILE *_file,int* _lineSize)
     char* _result = malloc((unsigned int) *_lineSize - 1);
     for (int var = 0; var < *_lineSize - 1; ++var)
        _result[var] = _line[var];
-    *_lineSize = *_lineSize - 1;
+    *_lineSize =  *_lineSize <= 0 ? 0 : *_lineSize - 1;
     free(_line);
     return _result;
 }
@@ -106,6 +106,8 @@ int toInteger(char *_data, int total)
 #elif defined (linux)
 int toInteger(char *_data, int total)
 {
+    if(total == 0)
+        return 0;
     int multi = 1;
     if(_data[0] == '-')
     {
