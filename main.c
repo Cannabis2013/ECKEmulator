@@ -42,8 +42,8 @@ int main()
         }
         else
         {
-            int _filtered_Val = filter(_unfilt_Buffer,delay,_filt_Buffer,delay);
-            printf("d",_filtered_Val);
+            int _filtered_Val = filter(_unfilt_Buffer,delay,_filt_Buffer,delay, t);
+            printf("%d",_filtered_Val);
             printf("\n");
 
         }
