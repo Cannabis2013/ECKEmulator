@@ -3,6 +3,7 @@
 #include "qsr.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "QueueManipulator.h"
 
 // Main function for organizing the program execution.
 // The functions and object predefined are just for inspiration.
@@ -14,7 +15,8 @@ int main()
 	FILE *file;                  // Pointer to a file object
     file = openfile("ECG.txt");         // Read Data from Sensor
 
-    int _overhead = 12;
+    int delay = 11;
+    int _overhead = delay;
     int* _x_Buffer = NULL;
     int *_y_Buffer = NULL;
     if(!(_y_Buffer = malloc((unsigned) _overhead)) ||
@@ -22,13 +24,30 @@ int main()
         return 0;
 
     int x = 0;
-    while (_overhead)
+    while (_overhead >= 0)
     {
+        int _y = 0;
         int _total = 1;
-        int _y = getNextData(file,&_total);
+        if(delay >= 0)
+        {
+            _x_Buffer[delay] = x;
+            _y_Buffer[delay] = getNextData(file,&_total);
+
+            delay--;
+        }
+        else
+        {
+            // TODO: Do operations
+
+            _y = takeFirst(_y_Buffer,delay,getNextData(file,&_total));
+
+
+        }
+
+
+        x++;
         if(_total == 0)
             _overhead--;
-        x++;
     }
 
     lowPassFilter();            // Filter Data

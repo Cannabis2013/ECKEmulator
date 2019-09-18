@@ -8,7 +8,6 @@ int getNextData(FILE *_file, int *total)
     free(_line);
 
     return _result;
-
 }
 
 FILE* openfile(const char* filename)
