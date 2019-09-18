@@ -2,10 +2,10 @@
 
 int getNextData(FILE *_file, int *total)
 {
-    char *_line = readLine(_file,total);
-    int _result = toInteger(_line,*total);
+    char *_file_Line = readLine(_file,total);
+    int _result = toInteger(_file_Line,*total);
 
-    free(_line);
+    free(_file_Line);
 
     return _result;
 }
@@ -61,7 +61,6 @@ char *readLine(FILE *_file,int* _lineSize)
     for (int var = 0; var < *_lineSize - 1; ++var)
        _result[var] = _line[var];
     *_lineSize =  *_lineSize <= 0 ? 0 : *_lineSize - 1;
-    free(_line);
     return _result;
 }
 #elif __APPLE_CC__

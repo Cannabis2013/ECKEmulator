@@ -42,10 +42,9 @@ int main()
         }
         else
         {
-            int _filtered_Val = filter(_unfilt_Buffer,delay,_filt_Buffer,delay, t);
+            int _filtered_Val = filter(_unfilt_Buffer,delay,_filt_Buffer,_filter_Buffer_Size, t);
             printf("%d",_filtered_Val);
             printf("\n");
-
         }
 
         insert(_t_Buffer,delay,++t);
