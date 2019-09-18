@@ -23,6 +23,7 @@ int main()
 
     if(!(_unfilt_Buffer = malloc((unsigned) _overhead)) ||
             !(_t_Buffer = malloc((unsigned)_overhead)))
+
         return 0;
 
     int x = 0;
@@ -40,8 +41,6 @@ int main()
         }
         else
         {
-
-
         }
 
 
@@ -50,7 +49,7 @@ int main()
             _overhead--;
     }
 
-    lowPassFilter();            // Filter Data
+    lowPassFilter();           // Filter Data
                                 
     peakDetection(&qsr_params); // Perform Peak Detection
 
