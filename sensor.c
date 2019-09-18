@@ -65,7 +65,7 @@ char *readLine(FILE *_file,int* _lineSize)
     free(_line);
     return _result;
 }
-#elif unix
+#elif __APPLE_CC__
 
 char *readLine(FILE *_file,int* _lineSize)
 {
@@ -76,7 +76,7 @@ char *readLine(FILE *_file,int* _lineSize)
     char* _result = malloc((unsigned int) *_lineSize - 1);
     for (int var = 0; var < *_lineSize - 1; ++var)
        _result[var] = _line[var];
-    *_lineSize = *_lineSize - 1;
+    *_lineSize =  *_lineSize <= 0 ? 0 : *_lineSize - 1;
     free(_line);
     return _result;
 }
@@ -125,7 +125,7 @@ int toInteger(char *_data, int total)
 
     return result * multi;
 }
-#elif defined (unix)
+#elif defined (__APPLE_CC__)
 int toInteger(char *_data, int total)
 {
     int multi = 1;
