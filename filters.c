@@ -5,11 +5,11 @@
 
 int lowPassFilter(int *_input_Buffer,int _input_Buffer_Size,int* _filtered, int _filtered_Size)
 {
-    int _filtered_Sum = 2*_filtered[_filtered_Size - 2] - _filtered[_filtered_Size - 3];
+    int _filtered_Dif = 2*_filtered[_filtered_Size - 2] - _filtered[_filtered_Size - 3];
     int _unfiltered_Sum = _input_Buffer[_input_Buffer_Size - 1] -
             2*_input_Buffer[_input_Buffer_Size - 7] + _input_Buffer[_input_Buffer_Size - 13];
 
-    return _filtered_Sum + _unfiltered_Sum/32;
+    return _filtered_Dif + _unfiltered_Sum/32;
 }
 
 int highPassFilter(int *_input_Buffer, int _input_Buffer_Size,int _filtered_Point)

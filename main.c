@@ -46,10 +46,8 @@ int main()
         else
         {
             _filtered_Value = lowPassFilter(_unfiltered_Buffer,_unfiltered_Buffer_Size,_filtered_Buffer,_filtered_Buffer_Size);
+            _filtered_Value = highPassFilter(_unfiltered_Buffer,_unfiltered_Buffer_Size,_filtered_Buffer[32]);
             appendToArray(_filtered_Buffer,_filtered_Buffer_Size,_filtered_Value);
-            _filtered_Value = highPassFilter(_unfiltered_Buffer,_unfiltered_Buffer_Size,_filtered_Buffer[31]);
-            appendToArray(_filtered_Buffer,_filtered_Buffer_Size,_filtered_Value);
-            _HP_Filtered_Value = _filtered_Value;
         }
         printf("Output: %d",_filtered_Value);
         printf("\n");
