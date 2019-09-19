@@ -19,17 +19,17 @@ int main()
 	FILE *file;                  // Pointer to a file object
     file = openfile("ECG.txt");         // Read Data from Sensor
 
-    int _unfiltered_Buffer_Size = 13;
+    int _unfiltered_Buffer_Size = 33;
     int delay = 0;
     int _overhead = 50;
     int *_unfiltered_Buffer = malloc((unsigned) _unfiltered_Buffer_Size*sizeof (int));
-    int _LP_Filtered_Buffer_Size = 33;
-    int *_LP_Filtered_Buffer = malloc((unsigned)_LP_Filtered_Buffer_Size*sizeof (int));
+    int _filtered_Buffer_Size = 33;
+    int *_filtered_Buffer = malloc((unsigned)_filtered_Buffer_Size*sizeof (int));
     int _HP_Filtered_Value = 0;
     int t = 0;
 
     initializeArray(_unfiltered_Buffer,_unfiltered_Buffer_Size,0);
-    initializeArray(_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size,0);
+    initializeArray(_filtered_Buffer,_filtered_Buffer_Size,0);
 
     while (_overhead >= 0)
     {
@@ -45,9 +45,10 @@ int main()
             delay--;
         else
         {
-            _filtered_Value = lowPassFilter(_unfiltered_Buffer,_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size);
-            appendToArray(_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size,_filtered_Value);
-            _filtered_Value = highPassFilter(_LP_Filtered_Buffer,_HP_Filtered_Value);
+            _filtered_Value = lowPassFilter(_unfiltered_Buffer,_unfiltered_Buffer_Size,_filtered_Buffer,_filtered_Buffer_Size);
+            appendToArray(_filtered_Buffer,_filtered_Buffer_Size,_filtered_Value);
+            _filtered_Value = highPassFilter(_unfiltered_Buffer,_unfiltered_Buffer_Size,_filtered_Buffer[31]);
+            appendToArray(_filtered_Buffer,_filtered_Buffer_Size,_filtered_Value);
             _HP_Filtered_Value = _filtered_Value;
         }
         printf("Output: %d",_filtered_Value);
