@@ -4,9 +4,7 @@
 #include <math.h>
 #include "arraymanipulator.h"
 
-int filter(int *_unfiltered, int _delay, int* _filtered, int filteredSize, int _t);
-
-void lowPassFilter(int *_unfiltered, int *_filtered, int _filtered_Size, int *result);
-
+int lowPassFilter(int *_unfiltered, int *_filtered, int _filtered_Size);
+int highPassFilter(int *_unfiltered, int _HP_Filtered_Value);
  
 #endif // FILTERS_H
