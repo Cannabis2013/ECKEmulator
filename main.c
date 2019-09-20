@@ -21,7 +21,7 @@ int main()
 
     int _unfiltered_Buffer_Size = 33;
     int delay = 0;
-    int _overhead = 50;
+    int _overhead =0;
     int *_unfiltered_Buffer = malloc((unsigned) _unfiltered_Buffer_Size*sizeof (int));
     int _LP_Filtered_Buffer_Size = 33;
     int *_LP_Filtered_Buffer = malloc((unsigned)_LP_Filtered_Buffer_Size*sizeof (int));
@@ -32,7 +32,7 @@ int main()
 
     initializeArray(_unfiltered_Buffer,_unfiltered_Buffer_Size,0);
     initializeArray(_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size,0);
-
+    initializeArray(_HP_Filtered_Buffer,_HP_Filtered_Buffer_Size,0);
     while (_overhead >= 0)
     {
         int _line_Size = 1;
@@ -40,7 +40,6 @@ int main()
 
         // Initializing buffer array
         appendToArray(_unfiltered_Buffer,_unfiltered_Buffer_Size,getNextData(file,&_line_Size));
-        int t = _unfiltered_Buffer[12];
         printf("Input: %d",t);
         printf(" ");
         if(delay > 0)
