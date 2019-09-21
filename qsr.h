@@ -19,4 +19,6 @@ typedef struct QRS_params
 // Feel free to change and add methods
 void peakDetection(QRS_params *params);
 
+int findPulse(int RR_size, int time);
+
 #endif // QSR_H

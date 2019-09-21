@@ -66,8 +66,21 @@ int main()
             _overhead--;
         t++;
     }
-    //peakDetection(&qsr_params); // Perform Peak Detection
+    // peakDetection(&qsr_params); // Perform Peak Detection
 
+    // int R_peaks[];
+    // int R_peak_timestamps[];
+    // int RP_size = sizeof (R_peaks)/ sizeof (R_reaks[0]);
+    // int pulse = findPulse(RP_size, t);
+    // for (int i = 0; i < RP_size) {
+    // printf("%d ", R_peak_timestamps[i]);
+    // printf(R_peaks[i]);
+    // print("\n");
+    // }
+    // printf("Pulse: %d", pulse);
+    // printf("\n");
+    // printf("Warnings: %d", det er nok under peak detection, at man finder frem til,
+    // om patienten skal have en warning);
 
     return fclose(file);
 }
