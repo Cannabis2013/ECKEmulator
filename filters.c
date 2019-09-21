@@ -18,3 +18,19 @@ int highPassFilter(int *_input_Buffer, int _input_Buffer_Size,int _filtered_Poin
             _input_Buffer[_input_Buffer_Size - 18] +
             _input_Buffer[_input_Buffer_Size - 33]/32;
 }
+
+int derivative(int *_input_Buffer, int _input_Buffer_Size)
+{
+    return (1/8)*(_input_Buffer[_input_Buffer_Size - 1] + _input_Buffer[_input_Buffer_Size - 2]
+            - _input_Buffer[_input_Buffer_Size -4] - 2*_input_Buffer[_input_Buffer_Size -5]);
+}
+
+int _moving_Window_Integrator(int *_input_Buffer, int _input_Buffer_Size)
+{
+    int N = 30;
+    int sum = 0;
+    for (int var = 1; var <= N; ++var)
+        sum += _input_Buffer[(_input_Buffer_Size -1) - (N - var)];
+
+    return (1/N)*sum;
+}
