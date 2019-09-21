@@ -16,7 +16,8 @@ void printValue(int _val, int mode)
 int main()
 {
     QRS_params qsr_params;       // Instance of the made avaiable through: #include "qsr.h"
-	FILE *file;                  // Pointer to a file object
+    FILE *file;
+    FILE *wFile;
     file = openfile("ECG.txt");         // Read Data from Sensor
 
     int _unfiltered_Buffer_Size = 33;
@@ -55,7 +56,6 @@ int main()
         _filtered_Value *= _filtered_Value;
         appendToArray(_SQ_Filtered_Buffer,_SQ_Filtered_Buffer_Size,_filtered_Value);
         _filtered_Value = _moving_Window_Integrator(_SQ_Filtered_Buffer,_SQ_Filtered_Buffer_Size);
-
 
         if(t >= 30)
         {
