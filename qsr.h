@@ -1,9 +1,21 @@
 #ifndef QSR_H
 #define QSR_H
 
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "arraymanipulator.h"
+
 // Header file for QRS functionality 
 // it is recommended to use the structure "QRS_parameters"
 // to organize all variables and parameters
+
+typedef struct Peak
+{
+    int _value;
+    int _time;
+}Peak;
 
 typedef struct QRS_params
 {
@@ -14,21 +26,22 @@ typedef struct QRS_params
    int _RR_Low;
    int _RR_High;
    int _RR_Miss;
+   int _AVG1_Len;
+   int _AVG2_Len;
+   int *_RR_AVG1;
+   int *_RR_AVG2;
+
+   int _r_Peaks_Size;
+   int _n_Peaks_Size;
+   Peak *_r_Peaks;
+   Peak *_n_Peaks;
 } QRS_params;
 
-typedef struct Peak
-{
-    /*
-     * Noise-peak : _mode = 0
-     *     R-peak : _mode = 1
-     */
 
-    int _mode;
-    int _value;
-    int _time;
-}Peak;
-
+Peak* expandArray(Peak* _peaks, int *_peaks_Size, Peak _p);
+void initialize_Peaks(Peak* _peaks,int _peaks_Size);
+void appendPeak(Peak *_peaks, int _peaks_Size, Peak _new_Peak);
 // Feel free to change and add methods
-void peakDetection(QRS_params *params, int _current_Input, int *_last_Input, int *_control_Value);
+bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp);
 
 #endif // QSR_H
