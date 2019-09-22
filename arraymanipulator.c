@@ -17,18 +17,12 @@ void initializeArray(int *_seq, int total, int _initial_Value)
         _seq[var] = _initial_Value;
 }
 
-
-
-int average(int *_seq, int total)
+int average(int *_input, int _input_Lenght,int _N)
 {
-    int N = 0, sum = 0;
-    for (int var = total - 1; var > 0; --var) {
-       int val = _seq[var];
-       if(val == -1)
-           return sum/N;
-       sum += val;
-       N++;
-    }
+    int sum = 0, _index_Of_last_Element = _input_Lenght - 1;
 
-    return sum;
+    for (int var = 0; var < _N; ++var)
+       sum += _input[_index_Of_last_Element - var];
+
+    return sum/_N;
 }

@@ -18,8 +18,10 @@ int main()
     if((file = openfile("ECG.txt")) == NULL)
         return -1;
 
+
     /*
-     * Buffer initialization section
+     * QRS parameters section
+     *  - Initialize QRS struct parameters and arrays
      */
 
     QRS_params * const _QRS = malloc(sizeof (*_QRS));
@@ -30,6 +32,7 @@ int main()
     _QRS->_RR_Miss = 0;
     _QRS->_THRESHOLD1 = 0;
     _QRS->_THRESHOLD2 = 0;
+    _QRS->_last_Peak_Position = -1;
     _QRS->_AVG1_Len = 8;
     _QRS->_AVG2_Len = 8;
     _QRS->_RR_AVG1 = malloc((unsigned)_QRS->_AVG1_Len*sizeof (int));
@@ -42,8 +45,16 @@ int main()
     initializeArray(_QRS->_RR_AVG1,_QRS->_AVG1_Len,0);
     initializeArray(_QRS->_RR_AVG2,_QRS->_AVG2_Len,0);
 
-    initializeArray(_QRS->_RR_AVG1,_QRS->_AVG1_Len,-1);
-    initializeArray(_QRS->_RR_AVG2,_QRS->_AVG2_Len,-1);
+    initializeArray(_QRS->_RR_AVG1,_QRS->_AVG1_Len,0);
+    initializeArray(_QRS->_RR_AVG2,_QRS->_AVG2_Len,0);
+
+    /*
+     * QRS parameters section end
+     */
+
+    /*
+     * Buffer initialization section
+     */
 
     int _unfiltered_Buffer_Size = 13;
     int *_unfiltered_Buffer = malloc((unsigned) _unfiltered_Buffer_Size*sizeof (int));
@@ -68,9 +79,6 @@ int main()
      * Peak section
      */
 
-    int _n_Peaks_Size = 20;
-
-    Peak* _n_Peaks = malloc((unsigned) _n_Peaks_Size*(sizeof (Peak)));
 
     /*
      * Peak section end

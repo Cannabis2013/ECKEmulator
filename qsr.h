@@ -30,6 +30,7 @@ typedef struct QRS_params
    int _AVG2_Len;
    int *_RR_AVG1;
    int *_RR_AVG2;
+   int _last_Peak_Position;
 
    int _r_Peaks_Size;
    int _n_Peaks_Size;
@@ -41,7 +42,8 @@ typedef struct QRS_params
 Peak* expandArray(Peak* _peaks, int *_peaks_Size, Peak _p);
 void initialize_Peaks(Peak* _peaks,int _peaks_Size);
 void appendPeak(Peak *_peaks, int _peaks_Size, Peak _new_Peak);
-// Feel free to change and add methods
+void _initialize_Parameters(QRS_params *_params, Peak _p, bool _is_Searchback);
+
 bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp);
 
 #endif // QSR_H
