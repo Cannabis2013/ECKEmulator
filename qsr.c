@@ -1,6 +1,6 @@
 #include "qsr.h"
 
-Peak *expandArray(Peak *_peaks, int *_peaks_Size, Peak _p)
+Peak *_expand_Array(Peak *_peaks, int *_peaks_Size, Peak _p)
 {
     *_peaks_Size = *_peaks_Size + 1;
     _peaks = realloc(_peaks,(unsigned)*_peaks_Size + 1);
@@ -30,27 +30,15 @@ void initialize_Peaks(Peak *_peaks, int _peaks_Size)
     }
 }
 
-bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp)
+bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp,int *_regular)
 {
     int _last_Peak_Position = _params->_last_Peak_Position;
-    int _current_RR_Interval = _time_Stamp - _last_Peak_Position ;
-    int _NPKF = _params->_NPKF, _SPKF = _params->_SPKF;
     int _peak_Candidate = _buffer[1], _preceding = _buffer[2], _next = _buffer[0];
-    bool _searchback_Succes = false;
-
-    if(_current_RR_Interval > _params->_RR_Miss)
-    {
-        /*
-         * TODO: Perform search back procedure
-         * TODO: Reinitialize the _current_RR_Interval with regard to the new peak found
-         */
-
-        _searchback_Operation(_params);
-    }
     if(_peak_Candidate > _preceding && _peak_Candidate > _next)
     {
         if(_peak_Candidate > _params->_THRESHOLD1)
         {
+            int _current_RR_Interval = _time_Stamp - _last_Peak_Position ;
             /*
              * We have a R-peak
              */
@@ -60,14 +48,25 @@ bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp)
             {
                 /*
                  * WARNING:
-                 *      Interval falls out of the interval-limit and issues a warning.
+                 *      Interval falls out of the interval-limit and is prone for a warning.
                  */
+                if(_current_RR_Interval > _params->_RR_Miss)
+                {
+                    /*
+                     * TODO: Perform search back procedure
+                     * TODO: Reinitialize the _current_RR_Interval with regard to the new peak found
+                     */
+
+                    _searchback_Operation(_params);
+                }
+                else
+                    *_regular = *_regular + 1;
             }
 
             Peak _p;
             _p._time = _time_Stamp;
             _p._value = _peak_Candidate;
-            appendPeak(_params->_r_Peaks,_params->_r_Peaks_Size,_p);
+            _expand_Array(_params->_r_Peaks,&_params->_r_Peaks_Size,_p);
 
             _initialize_Parameters(_params,_p,false);
 
@@ -79,6 +78,8 @@ bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp)
              * A noise peak detected
              */
 
+            int _NPKF = _params->_NPKF, _SPKF = _params->_SPKF;
+
             _params->_NPKF = _peak_Candidate/8 + (7*_NPKF)/8;
             _params->_THRESHOLD1 = _NPKF + (_SPKF - _NPKF)/4;
             _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
@@ -87,13 +88,11 @@ bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp)
             _p._time = _time_Stamp;
             _p._value = _peak_Candidate;
 
-            expandArray(_params->_n_Peaks,&_params->_n_Peaks_Size,_p);
+            _expand_Array(_params->_n_Peaks,&_params->_n_Peaks_Size,_p);
         }
     }
-    if(_searchback_Succes)
-        return true;
-    else
-        return false;
+
+    return false;
 }
 
 void _initialize_Parameters(QRS_params *_params, Peak _p, bool _is_Searchback)
@@ -105,11 +104,9 @@ void _initialize_Parameters(QRS_params *_params, Peak _p, bool _is_Searchback)
         appendToArray(_params->_RR_AVG2,_params->_AVG2_Len,_current_RR_Interval);
         appendToArray(_params->_RR_AVG1,_params->_AVG1_Len,_current_RR_Interval);
     }
-    int avg = 0;
-    if(_is_Searchback)
-        avg = average(_params->_RR_AVG1,_params->_AVG1_Len,8);
-    else
-        avg = average(_params->_RR_AVG2,_params->_AVG2_Len,8);
+
+    int avg = _is_Searchback ? average(_params->_RR_AVG1,_params->_AVG1_Len,8):
+                               average(_params->_RR_AVG2,_params->_AVG2_Len,8);
 
     _params->_RR_Low = (92*avg)/100;
     _params->_RR_High = (116*avg)/100;
@@ -132,7 +129,7 @@ bool _searchback_Operation(QRS_params *_params)
         if(_n_Peak._value > _threshold_2 && _peak_Time >= _last_Peak_Position)
         {
             appendPeak(_params->_r_Peaks,_params->_r_Peaks_Size,_n_Peak);
-            _initialize_Parameters(_params,_n_Peak,false);
+            _initialize_Parameters(_params,_n_Peak,true);
             return true;
         }
     }
