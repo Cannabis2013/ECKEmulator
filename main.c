@@ -111,7 +111,7 @@ int main()
 
         if(_line_Size <= 0)
             _overhead--;
-        t++;
+        _t++;
     }
     // int R_peaks[];
     // int R_peak_timestamps[];
