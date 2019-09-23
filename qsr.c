@@ -32,10 +32,11 @@ void initialize_Peaks(Peak *_peaks, int _peaks_Size)
 
 bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp)
 {
-    int _last_Peak_Position = _params->_r_Peaks[_params->_r_Peaks_Size - 1]._time;
+    int _last_Peak_Position = _params->_last_Peak_Position;
     int _current_RR_Interval = _time_Stamp - _last_Peak_Position ;
     int _NPKF = _params->_NPKF, _SPKF = _params->_SPKF;
-    int _peak_Candidate = _buffer[1], _preceding = _buffer[2], _appending = _buffer[0];
+    int _peak_Candidate = _buffer[1], _preceding = _buffer[2], _next = _buffer[0];
+    bool _searchback_Succes = false;
 
     if(_current_RR_Interval > _params->_RR_Miss)
     {
@@ -44,23 +45,9 @@ bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp)
          * TODO: Reinitialize the _current_RR_Interval with regard to the new peak found
          */
 
-        int _threshold_2 = _params->_THRESHOLD2;
-
-        for (int var = 0; var < _params->_n_Peaks_Size; ++var) {
-            Peak _n_Peak = _params->_n_Peaks[var];
-
-            if(_n_Peak._value > _threshold_2)
-            {
-                appendPeak(_params->_r_Peaks,_params->_r_Peaks_Size,_n_Peak);
-
-                _initialize_Parameters(_params,_n_Peak,false);
-
-                return true;
-            }
-        }
+        _searchback_Operation(_params);
     }
-
-    if(_peak_Candidate > _preceding && _peak_Candidate > _appending)
+    if(_peak_Candidate > _preceding && _peak_Candidate > _next)
     {
         if(_peak_Candidate > _params->_THRESHOLD1)
         {
@@ -101,11 +88,12 @@ bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp)
             _p._value = _peak_Candidate;
 
             expandArray(_params->_n_Peaks,&_params->_n_Peaks_Size,_p);
-
         }
     }
-
-    return false;
+    if(_searchback_Succes)
+        return true;
+    else
+        return false;
 }
 
 void _initialize_Parameters(QRS_params *_params, Peak _p, bool _is_Searchback)
@@ -132,4 +120,21 @@ void _initialize_Parameters(QRS_params *_params, Peak _p, bool _is_Searchback)
     _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
 
     _params->_last_Peak_Position = _p._time;
+}
+
+bool _searchback_Operation(QRS_params *_params)
+{
+    int _last_Peak_Position = _params->_last_Peak_Position;
+    int _threshold_2 = _params->_THRESHOLD2;
+    for (int var = 0; var < _params->_n_Peaks_Size; ++var) {
+        Peak _n_Peak = _params->_n_Peaks[var];
+        int _peak_Time = _n_Peak._time;
+        if(_n_Peak._value > _threshold_2 && _peak_Time >= _last_Peak_Position)
+        {
+            appendPeak(_params->_r_Peaks,_params->_r_Peaks_Size,_n_Peak);
+            _initialize_Parameters(_params,_n_Peak,false);
+            return true;
+        }
+    }
+    return false;
 }
