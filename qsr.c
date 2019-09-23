@@ -36,7 +36,12 @@ bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp,int *_regu
     int _peak_Candidate = _buffer[1], _preceding = _buffer[2], _next = _buffer[0];
     if(_peak_Candidate > _preceding && _peak_Candidate > _next)
     {
-        if(_peak_Candidate > _params->_THRESHOLD1)
+        Peak _p;
+        _p._time = _time_Stamp;
+        _p._value = _peak_Candidate;
+
+        _expand_Array(_params->_n_Peaks,&_params->_n_Peaks_Size,_p);
+        if(_p._value > _params->_THRESHOLD1)
         {
             int _current_RR_Interval = _time_Stamp - _last_Peak_Position ;
             /*
@@ -46,10 +51,6 @@ bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp,int *_regu
             if((_current_RR_Interval < _params->_RR_Low || _current_RR_Interval > _params->_RR_High)
                     && _last_Peak_Position != -1)
             {
-                /*
-                 * WARNING:
-                 *      Interval falls out of the interval-limit and is prone for a warning.
-                 */
                 if(_current_RR_Interval > _params->_RR_Miss)
                 {
                     /*
@@ -60,15 +61,18 @@ bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp,int *_regu
                     _searchback_Operation(_params);
                 }
                 else
+                {
+                    /*
+                     * WARNING:
+                     *      Interval falls out of the interval-limit and the system is prone for a warning.
+                     */
+
                     *_regular = *_regular + 1;
+                }
             }
 
-            Peak _p;
-            _p._time = _time_Stamp;
-            _p._value = _peak_Candidate;
             _expand_Array(_params->_r_Peaks,&_params->_r_Peaks_Size,_p);
-
-            _initialize_Parameters(_params,_p,false);
+            _initialize_Parameters_Full(_params,_p,false);
 
             return true;
         }
@@ -78,24 +82,14 @@ bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp,int *_regu
              * A noise peak detected
              */
 
-            int _NPKF = _params->_NPKF, _SPKF = _params->_SPKF;
-
-            _params->_NPKF = _peak_Candidate/8 + (7*_NPKF)/8;
-            _params->_THRESHOLD1 = _NPKF + (_SPKF - _NPKF)/4;
-            _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
-
-            Peak _p;
-            _p._time = _time_Stamp;
-            _p._value = _peak_Candidate;
-
-            _expand_Array(_params->_n_Peaks,&_params->_n_Peaks_Size,_p);
+            _initialize_Parameters_Semi(_params,_p);
         }
     }
 
     return false;
 }
 
-void _initialize_Parameters(QRS_params *_params, Peak _p, bool _is_Searchback)
+void _initialize_Parameters_Full(QRS_params *_params, Peak _p, bool _is_Searchback)
 {
     int _current_RR_Interval = _p._time - _params->_last_Peak_Position;
     int _NPKF = _params->_NPKF, _SPKF = _params->_SPKF;
@@ -129,9 +123,18 @@ bool _searchback_Operation(QRS_params *_params)
         if(_n_Peak._value > _threshold_2 && _peak_Time >= _last_Peak_Position)
         {
             appendPeak(_params->_r_Peaks,_params->_r_Peaks_Size,_n_Peak);
-            _initialize_Parameters(_params,_n_Peak,true);
+            _initialize_Parameters_Full(_params,_n_Peak,true);
             return true;
         }
     }
     return false;
+}
+
+void _initialize_Parameters_Semi(QRS_params *_params, Peak _p)
+{
+    int _NPKF = _params->_NPKF, _SPKF = _params->_SPKF;
+
+    _params->_NPKF = _p._value/8 + (7*_NPKF)/8;
+    _params->_THRESHOLD1 = _NPKF + (_SPKF - _NPKF)/4;
+    _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
 }
