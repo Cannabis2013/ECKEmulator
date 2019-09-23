@@ -47,4 +47,6 @@ void _initialize_Parameters(QRS_params *_params, Peak _p, bool _is_Searchback);
 
 bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp,int *_regular);
 
+int findPulse(int RR_size, int time);
+
 #endif // QSR_H
