@@ -1,8 +1,8 @@
 #include "sensor.h"
 #include "filters.h"
-#include "qsr.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <time.h>
+
+
 
 int main()
 {
@@ -29,6 +29,7 @@ int main()
     _params->_current_Average = 0;
     _params->_r_Peaks_Size = 0;
     _params->_n_Peaks_Size = 0;
+    _params->_prone_For_Warning = 0;
 
     if(!(_params->_r_Peaks = malloc((unsigned) _params->_r_Peaks_Size*sizeof (*_params->_r_Peaks))) ||
             !(_params->_n_Peaks = malloc((unsigned) _params->_n_Peaks_Size*sizeof (*_params->_n_Peaks))) ||
@@ -99,11 +100,15 @@ int main()
     int _sample_Point = 0;
     int _sample_Rate = 250;
     int _current_R_Peak_Index = 0;
-    int _is_Prone_For_Warning = 0;
 
     /*
      * Sample section end
      */
+
+#ifdef TEST_SESSION
+    int _t_Clock_Min = -1;
+    int _t_Clock_Max = 0;
+#endif
 
     while (_overhead >= 0)
     {
@@ -124,30 +129,56 @@ int main()
 
         if(_sample_Point >= _delay)
         {
-            int _time_Stamp = (_sample_Point - _delay)*1000/_sample_Rate;
 
-            peakDetection(_params,_filtered_Buffer,_time_Stamp,&_is_Prone_For_Warning);
-            if(_current_R_Peak_Index < _params->_r_Peaks_Size)
+            int _time_Stamp = (_sample_Point - _delay)*1000/_sample_Rate;
+#ifdef TEST_SESSION
+            int _t_Clock_Begin = clock();
+#endif
+
+            if(peakDetection(_params,_filtered_Buffer,_time_Stamp))
             {
-                while (_current_R_Peak_Index < _params->_r_Peaks_Size) {
-                    Peak _p = _params->_r_Peaks[_current_R_Peak_Index++];
-                    int _peak_Time_Stamp = _p._time;
-                    int _peak_Value = _p._value;
-                    if(_peak_Value > 2000)
-                    {
+                if(_current_R_Peak_Index < _params->_r_Peaks_Size)
+                {
+                    while (_current_R_Peak_Index < _params->_r_Peaks_Size) {
+                        Peak _p = _params->_r_Peaks[_current_R_Peak_Index++];
+                        int _peak_Time_Stamp = _p._time;
+                        int _peak_Value = _p._value;
+
                         int BPM = 60000/_params->_RR_AVG2[_params->_AVG2_Len - 1];
-                        printf("Sample: %d Time: %d Peak value: %d BPM: %d \n" ,
-                               _sample_Point,_peak_Time_Stamp,_peak_Value,BPM);
+                        printf("Time: %d Peak value: %d BPM: %d \n" ,
+                               _peak_Time_Stamp,_peak_Value,BPM);
+
+                        if(_peak_Value < 2000)
+                            printf("WARNING:\n Low heartpeak detected at time: %d",_time_Stamp);
                     }
                 }
+                if(_params->_prone_For_Warning > 4)
+                {
+                    printf("Warning:\nIrregulariteties detected in pulse at time: %d\n", _time_Stamp);
+                }
+#ifdef TEST_SESSION
+            int _t_Clock_End = clock();
+            int _t_Clock_Total_Elapsed_Time = _t_Clock_End - _t_Clock_Begin;
+            if(_t_Clock_Min == -1)
+                _t_Clock_Min = _t_Clock_Total_Elapsed_Time;
+            _t_Clock_Min = _t_Clock_Total_Elapsed_Time < _t_Clock_Min ? _t_Clock_Total_Elapsed_Time : _t_Clock_Min;
+            _t_Clock_Max = _t_Clock_Total_Elapsed_Time > _t_Clock_Max ? _t_Clock_Total_Elapsed_Time : _t_Clock_Max;
+#endif
             }
-        }
 
+        }
         if(_line_Size <= 0)
             _overhead--;
 
         _sample_Point++;
     }
+
+
+#ifdef TEST_SESSION
+
+    printf("\nTest details:\nMinimum execution time: %d ms\nMaximum execution time: %d ms\n\n",_t_Clock_Min, _t_Clock_Max);
+
+#endif
 
     /*
      * Cleanup section

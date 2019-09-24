@@ -1,7 +1,7 @@
 #ifndef SENSOR_H
 #define SENSOR_H
-#include <stdio.h>
-#include <stdlib.h>
+
+#include "filters.h"
 
 // Header file for the sensor functionality
 // You are free to change and add functions 

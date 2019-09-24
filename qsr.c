@@ -41,7 +41,7 @@ void initialize_Peaks(Peak *_peaks, int _peaks_Size)
     }
 }
 
-bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp,int *_prone_For_Warning)
+bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
 {
     int _last_Peak_Position = _params->_last_Peak_Position;
     int _peak_Candidate = _buffer[1];
@@ -82,8 +82,8 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp,int
                  *      Implement some sort of warning feature which notifies the staff about irregular peaks
                  */
 
-                *_prone_For_Warning = *_prone_For_Warning + 1;
-                return false;
+                _params->_prone_For_Warning = _params->_prone_For_Warning + 1;
+                return true;
             }
             _expand_Array(1,&_params->_r_Peaks_Size,_p,_params);
             _initialize_Parameters_R(_params,_p,false);
@@ -122,6 +122,8 @@ void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
     _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
 
     _params->_last_Peak_Position = _p._time;
+
+    _params->_prone_For_Warning = 0;
 }
 
 bool _searchback_Operation(QRS_params *_params)
