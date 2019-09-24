@@ -133,7 +133,7 @@ int main()
                     int _peak_Time_Stamp = _p._time;
                     int _peak_Value = _p._value;
                     if(_peak_Value > 2000)
-                        printf("Time: %d Peak value: %d \n",_peak_Time_Stamp,_peak_Value);
+                        printf("Sample: %d Time: %d Peak value: %d \n",_sample_Point,_peak_Time_Stamp,_peak_Value);
                 }
             }
         }

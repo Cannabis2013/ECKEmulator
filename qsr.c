@@ -141,6 +141,7 @@ bool _searchback_Operation(QRS_params *_params)
 }
 
 // David Tran
+
 int _find_Pulse(int RR_size, int time) {
     int milliseconds = time*1000/250;
     int beats_pr_min = (RR_size*1000)/milliseconds*60;
