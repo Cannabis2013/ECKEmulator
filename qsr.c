@@ -41,10 +41,13 @@ void initialize_Peaks(Peak *_peaks, int _peaks_Size)
     }
 }
 
-bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp,int *_regular)
+bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp,int *_prone_For_Warning)
 {
     int _last_Peak_Position = _params->_last_Peak_Position;
-    int _peak_Candidate = _buffer[1], _preceding = _buffer[2], _next = _buffer[0];
+    int _peak_Candidate = _buffer[1];
+    int _preceding = _buffer[2];
+    int _next = _buffer[0];
+
     if(_peak_Candidate > _preceding && _peak_Candidate > _next)
     {
         Peak _p;
@@ -71,37 +74,33 @@ bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp,int *_regu
 
                     return _searchback_Operation(_params);
                 }
-                else
-                {
-                    /*
-                     * WARNING:
-                     *      Interval falls out of the interval-limit and the system is prone for a warning.
-                     * TODO:
-                     *      Implement some sort of warning feature which notifies the staff about irregular peaks
-                     */
 
-                    *_regular = *_regular + 1;
-                    return false;
-                }
+                /*
+                 * WARNING:
+                 *      Interval falls out of the interval-limit and the system is prone for a warning.
+                 * TODO:
+                 *      Implement some sort of warning feature which notifies the staff about irregular peaks
+                 */
+
+                *_prone_For_Warning = *_prone_For_Warning + 1;
+                return false;
             }
             _expand_Array(1,&_params->_r_Peaks_Size,_p,_params);
-            _initialize_Parameters_Full(_params,_p,false);
+            _initialize_Parameters_R(_params,_p,false);
             return true;
         }
-        else
-        {
-            /*
-             * A noise peak detected
-             */
 
-            _initialize_Parameters_Semi(_params,_p);
-        }
+        /*
+         * A noise peak detected
+         */
+
+        _initialize_Parameters_Noise(_params,_p);
     }
 
     return false;
 }
 
-void _initialize_Parameters_Full(QRS_params *_params, Peak _p, bool _is_Searchback)
+void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
 {
     int _current_RR_Interval = _p._time - _params->_last_Peak_Position;
     _params->_SPKF = !_is_Searchback ?  _p._value/8 +(7*_params->_SPKF)/8 : _p._value/4 +(3*_params->_SPKF)/4 ;
@@ -134,23 +133,23 @@ bool _searchback_Operation(QRS_params *_params)
         {
             _expand_Array(1,&_params->_r_Peaks_Size,_n_Peak,_params);
 
-            _initialize_Parameters_Full(_params,_n_Peak,true);
+            _initialize_Parameters_R(_params,_n_Peak,true);
             return true;
         }
     }
     return false;
 }
 
-
 // David Tran
-int _find_Pulse(int RP_size, int time) {
+int _find_Pulse(int RR_size, int time) {
     int milliseconds = time*1000/250;
-    int beats_pr_min = (RP_size*1000)/milliseconds*60;
+    int beats_pr_min = (RR_size*1000)/milliseconds*60;
     return beats_pr_min;
 }
-void _initialize_Parameters_Semi(QRS_params *_params, Peak _p)
+void _initialize_Parameters_Noise(QRS_params *_params, Peak _p)
 {
-    int _NPKF = _params->_NPKF, _SPKF = _params->_SPKF;
+    int _NPKF = _params->_NPKF;
+    int _SPKF = _params->_SPKF;
 
     _params->_NPKF = _p._value/8 + (7*_NPKF)/8;
     _params->_THRESHOLD1 = _params->_NPKF + (_SPKF - _params->_NPKF)/4;

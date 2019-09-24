@@ -18,7 +18,7 @@ FILE* openfile(const char* filename)
 }
 
 #if defined (linux)
-char *readLine(FILE *_file,int* _lineSize)
+char *readLine(FILE *_file,int* const _lineSize)
 {
     char* _line = NULL;
     size_t _line_Buff_Size = 0;
@@ -27,6 +27,7 @@ char *readLine(FILE *_file,int* _lineSize)
     for (int var = 0; var < *_lineSize - 1; ++var)
        _result[var] = _line[var];
     *_lineSize =  *_lineSize <= 0 ? 0 : *_lineSize - 1;
+    free(_line);
     return _result;
 }
 #elif defined(__APPLE_CC__)
@@ -48,7 +49,7 @@ char *readLine(FILE *_file,int* _lineSize)
 #endif
 
 #if defined (linux)
-int toInteger(char *_data, int total)
+int toInteger(char *const _data, int total)
 {
     if(total == 0)
         return 0;

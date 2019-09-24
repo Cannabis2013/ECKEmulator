@@ -47,6 +47,6 @@ void appendPeak(Peak *_peaks, int _peaks_Size, Peak _new_Peak);
 int _find_Pulse(int RR_size, int time);
 void _initialize_Parameters_Full(QRS_params *_params, Peak _p, bool _is_Searchback);
 void _initialize_Parameters_Semi(QRS_params *_params, Peak _p);
-bool peakDetection(QRS_params *_params, int *_buffer, int _time_Stamp,int *_regular);
+bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp,int *_prone_For_Warning);
 
 #endif // QSR_H

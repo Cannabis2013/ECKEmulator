@@ -20,12 +20,13 @@ void initializeArray(int *_input, int _input_Lenght, int _initial_Value)
         _input[var] = _initial_Value;
 }
 
-int average(int *_input, int _input_Lenght,int _N)
+int average(const int * _input, int _input_Lenght,int _N)
 {
     if(_input == NULL)
         _Exit(-1);
 
-    int sum = 0, _index_Of_last_Element = _input_Lenght - 1;
+    int sum = 0;
+    int _index_Of_last_Element = _input_Lenght - 1;
     int _n = _N;
 
     for (int var = _index_Of_last_Element; _n >= 0 ; --var)

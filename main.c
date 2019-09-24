@@ -4,14 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void print_Output(int _sample_Point, int _input,int _delay)
-{
-    printf("Samplepoint: %d",_sample_Point - _delay);
-    printf(" ");
-    printf("Output: %d",_input);
-    printf("\n");
-}
-
 int main()
 {
     FILE *file;
@@ -48,7 +40,6 @@ int main()
 
         return -1;
     }
-
 
     initializeArray(_params->_RR_AVG1,_params->_AVG1_Len,-1);
     initializeArray(_params->_RR_AVG2,_params->_AVG2_Len,-1);
@@ -107,7 +98,7 @@ int main()
     int _sample_Point = 0;
     int _sample_Rate = 250;
     int _current_R_Peak_Index = 0;
-    int _is_Regular = 0;
+    int _is_Prone_For_Warning = 0;
 
     /*
      * Sample section end
@@ -134,12 +125,13 @@ int main()
         {
             int _time_Stamp = (_sample_Point - _delay)*1000/_sample_Rate;
 
-            peakDetection(_params,_filtered_Buffer,_time_Stamp,&_is_Regular);
+            peakDetection(_params,_filtered_Buffer,_time_Stamp,&_is_Prone_For_Warning);
             if(_current_R_Peak_Index < _params->_r_Peaks_Size)
             {
                 while (_current_R_Peak_Index < _params->_r_Peaks_Size) {
                     Peak _p = _params->_r_Peaks[_current_R_Peak_Index++];
-                    int _peak_Time_Stamp = _p._time, _peak_Value = _p._value;
+                    int _peak_Time_Stamp = _p._time;
+                    int _peak_Value = _p._value;
                     if(_peak_Value > 2000)
                         printf("Time: %d Peak value: %d \n",_peak_Time_Stamp,_peak_Value);
                 }
@@ -151,19 +143,17 @@ int main()
 
         _sample_Point++;
     }
-    // int R_peaks[];
-    // int R_peak_timestamps[];
-    // int RP_size = sizeof (R_peaks)/ sizeof (R_eaks[0]);
-    // int pulse = findPulse(RP_size, t);
-    // for (int i = 0; i < RP_size) {
-    // printf("%d ", R_peak_timestamps[i]);
-    // printf(R_peaks[i]);
-    // print("\n");
-    // }
-    // printf("Pulse: %d", pulse);
-    // printf("\n");
-    // printf("Warnings: %d", det er nok under peak detection, at man finder frem til,
-    // om patienten skal have en warning);
+
+    /*
+     * Cleanup section
+     */
+
+    free(_params);
+    free(_unfiltered_Buffer);
+    free(_LP_Filtered_Buffer);
+    free(_HP_Filtered_Buffer);
+    free(_SQ_Filtered_Buffer);
+    free(_filtered_Buffer);
 
     return fclose(file);
 }

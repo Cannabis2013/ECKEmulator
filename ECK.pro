@@ -16,5 +16,3 @@ HEADERS += \
         sensor.h\
         qsr.h
 
-RESOURCES += \
-    ECG.txt
