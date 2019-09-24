@@ -26,6 +26,7 @@ int main()
     _params->_last_Peak_Position = 0;
     _params->_AVG1_Len = 8;
     _params->_AVG2_Len = 8;
+    _params->_current_Average = 0;
     _params->_r_Peaks_Size = 0;
     _params->_n_Peaks_Size = 0;
 
@@ -133,7 +134,11 @@ int main()
                     int _peak_Time_Stamp = _p._time;
                     int _peak_Value = _p._value;
                     if(_peak_Value > 2000)
-                        printf("Sample: %d Time: %d Peak value: %d \n",_sample_Point,_peak_Time_Stamp,_peak_Value);
+                    {
+                        int BPM = 60000/_params->_RR_AVG2[_params->_AVG2_Len - 1];
+                        printf("Sample: %d Time: %d Peak value: %d BPM: %d \n" ,
+                               _sample_Point,_peak_Time_Stamp,_peak_Value,BPM);
+                    }
                 }
             }
         }
