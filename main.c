@@ -11,10 +11,20 @@ int main()
     if((_file_Input = openfile("ECG.txt")) == NULL)
         return -1;
 
-    FILE *_file_Output;
+    FILE *_file_Output_Full = NULL;
 
-    if( !(_file_Output =(fopen("output.txt","w"))))
+    if( !(_file_Output_Full =fopen("output.txt","w")))
         return -1;
+
+    FILE *_file_Output_Peaks = NULL;
+    if(!(_file_Output_Peaks = fopen("peaks.txt","w")))
+        return -1;
+
+#ifdef _WIN64
+    return -1;
+#elif _WIN32_
+    return -1;
+#endif
 
     /*
      * QRS parameters section
@@ -70,13 +80,10 @@ int main()
     int *_HP_Filtered_Buffer = NULL;
     int _SQ_Filtered_Buffer_Size = 30;
     int *_SQ_Filtered_Buffer = NULL;
-#ifdef PRINT_PEAKS
+
     int _delay = _unfiltered_Buffer_Size + _LP_Filtered_Buffer_Size +
             _HP_Filtered_Buffer_Size + _SQ_Filtered_Buffer_Size;
-#endif
-#ifdef PRINT_OUTPUT
-    int _delay = 0;
-#endif
+
     int _filtered_Buffer_Size = _delay;
     int *_filtered_Buffer = NULL;
 
@@ -136,10 +143,8 @@ int main()
 
         if(_sample_Point >= _delay)
         {
-
             int _time_Stamp = (_sample_Point - _delay)*1000/_sample_Rate;
 
-#ifdef PRINT_PEAKS
             if(peakDetection(_params,_filtered_Buffer,_time_Stamp))
             {
                 if(_current_R_Peak_Index < _params->_r_Peaks_Size)
@@ -150,8 +155,12 @@ int main()
                         int _peak_Value = _p._value;
 
                         int BPM = 60000/_params->_RR_AVG2[_params->_AVG2_Len - 1];
+
                         printf("Time: %d Peak value: %d BPM: %d \n" ,
                                _peak_Time_Stamp,_peak_Value,BPM);
+
+                        fprintf(_file_Output_Peaks,"%d; %d \n" ,
+                               _peak_Time_Stamp,_peak_Value);
 
                         if(_peak_Value < 2000)
                             printf("WARNING:\n Low heartpeak detected at time: %d",_time_Stamp);
@@ -162,8 +171,7 @@ int main()
                     printf("Warning:\nIrregularities detected at time: %d\n", _time_Stamp);
                 }
             }
-#endif
-            fprintf(_file_Output,"%d\n",_filtered_Value);
+            fprintf(_file_Output_Full," %d;%d\n",_time_Stamp,_filtered_Value);
 
         }
         if(_line_Size <= 0)
@@ -172,18 +180,12 @@ int main()
     }
 
     fclose(_file_Input);
-    fclose(_file_Output);
+    fclose(_file_Output_Full);
+    fclose(_file_Output_Peaks);
     /*
      * Cleanup section
      */
-    /*
-    free(_file_Output);
-    free(_params);
-    free(_unfiltered_Buffer);
-    free(_LP_Filtered_Buffer);
-    free(_HP_Filtered_Buffer);
-    free(_SQ_Filtered_Buffer);
-    free(_filtered_Buffer);
-    */
+
+
     return 0;
 }

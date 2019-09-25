@@ -85,6 +85,7 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
                 _params->_prone_For_Warning = _params->_prone_For_Warning + 1;
                 return true;
             }
+            _p._found_By_Searchback = 0;
             _expand_Array(1,&_params->_r_Peaks_Size,_p,_params);
             _initialize_Parameters_R(_params,_p,false);
             return true;
@@ -135,8 +136,8 @@ bool _searchback_Operation(QRS_params *_params)
         int _peak_Time = _n_Peak._time;
         if(_n_Peak._value > _threshold_2 && _peak_Time > _last_Peak_Position)
         {
+            _n_Peak._found_By_Searchback = 1;
             _expand_Array(1,&_params->_r_Peaks_Size,_n_Peak,_params);
-
             _initialize_Parameters_R(_params,_n_Peak,true);
             return true;
         }

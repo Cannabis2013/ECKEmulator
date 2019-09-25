@@ -9,6 +9,6 @@
 
 FILE* openfile(const char* filename);
 int getNextData(FILE *_file, int *total);
-int toInteger(char * const _data, int total);
-char *readLine(FILE *_file, int * const _lineSize);
+int toInteger(char *_data, int total);
+char *readLine(FILE *_file, int * _lineSize);
 #endif // SENSOR_H

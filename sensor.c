@@ -18,7 +18,7 @@ FILE* openfile(const char* filename)
 }
 
 #if defined (linux)
-char *readLine(FILE *_file,int* const _lineSize)
+char *readLine(FILE *_file, int *_lineSize)
 {
     char* _line = NULL;
     size_t _line_Buff_Size = 0;
@@ -49,7 +49,7 @@ char *readLine(FILE *_file,int* _lineSize)
 #endif
 
 #if defined (linux)
-int toInteger(char *const _data, int total)
+int toInteger(char *_data, int total)
 {
     if(total == 0)
         return 0;

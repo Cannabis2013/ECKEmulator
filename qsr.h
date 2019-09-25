@@ -15,6 +15,7 @@ typedef struct Peak
 {
     int _value;
     int _time;
+    int _found_By_Searchback;
 }Peak;
 
 typedef struct QRS_params
