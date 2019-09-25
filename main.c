@@ -163,7 +163,7 @@ int main()
                 }
             }
 #endif
-            fprintf(_file_Output,"Value: %d\n",_filtered_Value);
+            fprintf(_file_Output,"%d\n",_filtered_Value);
 
         }
         if(_line_Size <= 0)
