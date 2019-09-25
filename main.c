@@ -163,7 +163,7 @@ int main()
                 }
             }
 #endif
-            fprintf(_file_Output,"Time: %d Value: %d\n", _time_Stamp,_filtered_Value);
+            fprintf(_file_Output,"Value: %d\n",_filtered_Value);
 
         }
         if(_line_Size <= 0)
@@ -171,19 +171,19 @@ int main()
         _sample_Point++;
     }
 
-
-
+    fclose(_file_Input);
+    fclose(_file_Output);
     /*
      * Cleanup section
      */
-
+    /*
+    free(_file_Output);
     free(_params);
     free(_unfiltered_Buffer);
     free(_LP_Filtered_Buffer);
     free(_HP_Filtered_Buffer);
     free(_SQ_Filtered_Buffer);
     free(_filtered_Buffer);
-
-
-    return fclose(_file_Input);
+    */
+    return 0;
 }
