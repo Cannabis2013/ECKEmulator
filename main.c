@@ -3,14 +3,17 @@
 #include <time.h>
 
 
+#define PRINT_OUTPUT
 
 int main()
 {
-#ifdef TEST_SESSION
-    clock_t _t_Clock_Total_Runtime_Begin = clock();
-#endif
-    FILE *file;
-    if((file = openfile("ECG.txt")) == NULL)
+    FILE *_file_Input;
+    if((_file_Input = openfile("ECG.txt")) == NULL)
+        return -1;
+
+    FILE *_file_Output;
+
+    if( !(_file_Output =(fopen("output.txt","w"))))
         return -1;
 
     /*
@@ -67,8 +70,13 @@ int main()
     int *_HP_Filtered_Buffer = NULL;
     int _SQ_Filtered_Buffer_Size = 30;
     int *_SQ_Filtered_Buffer = NULL;
+#ifdef PRINT_PEAKS
     int _delay = _unfiltered_Buffer_Size + _LP_Filtered_Buffer_Size +
             _HP_Filtered_Buffer_Size + _SQ_Filtered_Buffer_Size;
+#endif
+#ifdef PRINT_OUTPUT
+    int _delay = 0;
+#endif
     int _filtered_Buffer_Size = _delay;
     int *_filtered_Buffer = NULL;
 
@@ -108,17 +116,13 @@ int main()
      * Sample section end
      */
 
-#ifdef TEST_SESSION
-    clock_t _t_Clock_Min = -1;
-    clock_t _t_Clock_Max = 0;
-#endif
 
     while (_overhead >= 0)
     {
         int _line_Size = 1;
         int _filtered_Value = 0;
 
-        appendToArray(_unfiltered_Buffer,_unfiltered_Buffer_Size,getNextData(file,&_line_Size));
+        appendToArray(_unfiltered_Buffer,_unfiltered_Buffer_Size,getNextData(_file_Input,&_line_Size));
 
         _filtered_Value = lowPassFilter(_unfiltered_Buffer,_unfiltered_Buffer_Size,_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size);
         appendToArray(_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size,_filtered_Value);
@@ -134,10 +138,8 @@ int main()
         {
 
             int _time_Stamp = (_sample_Point - _delay)*1000/_sample_Rate;
-#ifdef TEST_SESSION
-            clock_t _t_Clock_Begin = clock();
-#endif
 
+#ifdef PRINT_PEAKS
             if(peakDetection(_params,_filtered_Buffer,_time_Stamp))
             {
                 if(_current_R_Peak_Index < _params->_r_Peaks_Size)
@@ -159,20 +161,13 @@ int main()
                 {
                     printf("Warning:\nIrregularities detected at time: %d\n", _time_Stamp);
                 }
-#ifdef TEST_SESSION
-            clock_t _t_Clock_End = clock();
-            clock_t _t_Clock_Total_Elapsed_Time = _t_Clock_End - _t_Clock_Begin;
-            if(_t_Clock_Min == -1)
-                _t_Clock_Min = _t_Clock_Total_Elapsed_Time;
-            _t_Clock_Min = _t_Clock_Total_Elapsed_Time < _t_Clock_Min ? _t_Clock_Total_Elapsed_Time : _t_Clock_Min;
-            _t_Clock_Max = _t_Clock_Total_Elapsed_Time > _t_Clock_Max ? _t_Clock_Total_Elapsed_Time : _t_Clock_Max;
-#endif
             }
+#endif
+            fprintf(_file_Output,"Time: %d Value: %d\n", _time_Stamp,_filtered_Value);
 
         }
         if(_line_Size <= 0)
             _overhead--;
-
         _sample_Point++;
     }
 
@@ -188,16 +183,7 @@ int main()
     free(_HP_Filtered_Buffer);
     free(_SQ_Filtered_Buffer);
     free(_filtered_Buffer);
-#ifdef TEST_SESSION
-    clock_t _t_Clock_Total_Runtime_End = clock();
-    clock_t _t_Clock_Total_Elapsed_Time = _t_Clock_Total_Runtime_End - _t_Clock_Total_Runtime_Begin;
 
-    printf("\nTest results:\nMinimum execution time: %f  ms"
-           "\nMaximum execution time: %f ms\n"
-           "Total elapsed runtime: %f ms\n\n",_t_Clock_Min/CLOCKS_PER_SEC,
-           _t_Clock_Max/CLOCKS_PER_SEC,
-           _t_Clock_Total_Elapsed_Time/CLOCKS_PER_SEC);
 
-#endif
-    return fclose(file);
+    return fclose(_file_Input);
 }
