@@ -6,6 +6,9 @@
 
 int main()
 {
+#ifdef TEST_SESSION
+    clock_t _t_Clock_Total_Runtime_Begin = clock();
+#endif
     FILE *file;
     if((file = openfile("ECG.txt")) == NULL)
         return -1;
@@ -106,8 +109,8 @@ int main()
      */
 
 #ifdef TEST_SESSION
-    int _t_Clock_Min = -1;
-    int _t_Clock_Max = 0;
+    clock_t _t_Clock_Min = -1;
+    clock_t _t_Clock_Max = 0;
 #endif
 
     while (_overhead >= 0)
@@ -132,7 +135,7 @@ int main()
 
             int _time_Stamp = (_sample_Point - _delay)*1000/_sample_Rate;
 #ifdef TEST_SESSION
-            int _t_Clock_Begin = clock();
+            clock_t _t_Clock_Begin = clock();
 #endif
 
             if(peakDetection(_params,_filtered_Buffer,_time_Stamp))
@@ -154,11 +157,11 @@ int main()
                 }
                 if(_params->_prone_For_Warning > 4)
                 {
-                    printf("Warning:\nIrregulariteties detected in pulse at time: %d\n", _time_Stamp);
+                    printf("Warning:\nIrregularities detected at time: %d\n", _time_Stamp);
                 }
 #ifdef TEST_SESSION
-            int _t_Clock_End = clock();
-            int _t_Clock_Total_Elapsed_Time = _t_Clock_End - _t_Clock_Begin;
+            clock_t _t_Clock_End = clock();
+            clock_t _t_Clock_Total_Elapsed_Time = _t_Clock_End - _t_Clock_Begin;
             if(_t_Clock_Min == -1)
                 _t_Clock_Min = _t_Clock_Total_Elapsed_Time;
             _t_Clock_Min = _t_Clock_Total_Elapsed_Time < _t_Clock_Min ? _t_Clock_Total_Elapsed_Time : _t_Clock_Min;
@@ -174,11 +177,6 @@ int main()
     }
 
 
-#ifdef TEST_SESSION
-
-    printf("\nTest details:\nMinimum execution time: %d ms\nMaximum execution time: %d ms\n\n",_t_Clock_Min, _t_Clock_Max);
-
-#endif
 
     /*
      * Cleanup section
@@ -190,6 +188,16 @@ int main()
     free(_HP_Filtered_Buffer);
     free(_SQ_Filtered_Buffer);
     free(_filtered_Buffer);
+#ifdef TEST_SESSION
+    clock_t _t_Clock_Total_Runtime_End = clock();
+    clock_t _t_Clock_Total_Elapsed_Time = _t_Clock_Total_Runtime_End - _t_Clock_Total_Runtime_Begin;
 
+    printf("\nTest results:\nMinimum execution time: %f  ms"
+           "\nMaximum execution time: %f ms\n"
+           "Total elapsed runtime: %f ms\n\n",_t_Clock_Min/CLOCKS_PER_SEC,
+           _t_Clock_Max/CLOCKS_PER_SEC,
+           _t_Clock_Total_Elapsed_Time/CLOCKS_PER_SEC);
+
+#endif
     return fclose(file);
 }
