@@ -7,18 +7,31 @@
 
 int main()
 {
+    /*
+     * File section:
+     *  - Open/create files for output/plots
+     *  - Return -1 if fails
+     */
+
     FILE *_file_Input;
     if((_file_Input = openfile("ECG.txt")) == NULL)
         return -1;
 
-    FILE *_file_Output_Full = NULL;
+    FILE *_file_Filtered_Output = NULL;
 
-    if( !(_file_Output_Full =fopen("output.txt","w")))
+    if( !(_file_Filtered_Output =fopen("_filtered_output.txt","w")))
         return -1;
 
     FILE *_file_Output_Peaks = NULL;
     if(!(_file_Output_Peaks = fopen("peaks.txt","w")))
         return -1;
+
+
+    /*
+     * Check for OS section
+     *  - This code only works in linux/unix compliant systems
+     *  - It should be noted that we have experienced issues on OSX related to the outputs
+     */
 
 #ifdef _WIN64
     return -1;
@@ -61,10 +74,6 @@ int main()
     initializeArray(_params->_RR_AVG2,_params->_AVG2_Len,-1);
 
     /*
-     * QRS parameters section end
-     */
-
-    /*
      * Buffer initialization section
      *      (1) Allocate memmory and initialize size variables
      *      (2) Initialize buffer arrays with initial values to avoid undefined behaviour
@@ -105,10 +114,6 @@ int main()
     initializeArray(_SQ_Filtered_Buffer,_SQ_Filtered_Buffer_Size,0);
 
     /*
-     * Buffer initialization section end
-     */
-
-    /*
      * Sample section and peak section
      */
 
@@ -116,11 +121,6 @@ int main()
     int _sample_Point = 0;
     int _sample_Rate = 250;
     int _current_R_Peak_Index = 0;
-
-    /*
-     * Sample section end
-     */
-
 
     while (_overhead >= 0)
     {
@@ -169,7 +169,7 @@ int main()
                     printf("Warning:\nIrregularities detected at time: %d\n", _time_Stamp);
                 }
             }
-            fprintf(_file_Output_Full," %d;%d\n",_time_Stamp,_filtered_Value);
+            fprintf(_file_Filtered_Output," %d;%d\n",_time_Stamp,_filtered_Value);
 
         }
         if(_line_Size <= 0)
@@ -177,13 +177,13 @@ int main()
         _sample_Point++;
     }
 
-    fclose(_file_Input);
-    fclose(_file_Output_Full);
-    fclose(_file_Output_Peaks);
     /*
-     * Cleanup section
+     * Close the files
      */
 
+    fclose(_file_Input);
+    fclose(_file_Filtered_Output);
+    fclose(_file_Output_Peaks);
 
     return 0;
 }

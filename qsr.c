@@ -3,8 +3,8 @@
 void _expand_Array(int _mode, int *_peaks_Size, Peak _p,QRS_params *_params)
 {
     /*
-     * Noise-Peak for _mode = 0
-     * R-Peak for _mode = 1
+     * Noise-Peak : _mode = 0
+     * R-Peak : _mode = 1
      */
 
     *_peaks_Size = *_peaks_Size + 1;
@@ -58,7 +58,7 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
         if(_p._value > _params->_THRESHOLD1)
         {
             /*
-             * We have a R-peak
+             * R-peak detected
              */
 
             int _current_RR_Interval = (_params->_r_Peaks_Size != 0) ?  _time_Stamp - _last_Peak_Position : 0;
@@ -78,8 +78,6 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
                 /*
                  * WARNING:
                  *      Interval falls out of the interval-limit and the system is prone for a warning.
-                 * TODO:
-                 *      Implement some sort of warning feature which notifies the staff about irregular peaks
                  */
 
                 _params->_prone_For_Warning = _params->_prone_For_Warning + 1;
