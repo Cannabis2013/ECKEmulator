@@ -23,7 +23,7 @@ int main()
             !(_file_Filtered_Output =fopen("filtered_output.txt","w")) ||
             !(_file_Output_Peaks = fopen("peaks.txt","w")) ||
             !(_file_Output_Peaks_Searchback = fopen("peaks_Searchback.txt","w")) ||
-            !(_file_Output_Threshold1 = fopen("threshold1_levels","w")))
+            !(_file_Output_Threshold1 = fopen("threshold1_levels.txt","w")))
         return -1;
 
     /*
