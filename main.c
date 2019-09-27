@@ -10,22 +10,21 @@ int main()
     /*
      * File section:
      *  - Open/create files for output/plots
-     *  - Return -1 if fails
+     *  - Return -1 if fails to open/create
      */
 
     FILE *_file_Input;
-    if((_file_Input = openfile("ECG.txt")) == NULL)
-        return -1;
-
     FILE *_file_Filtered_Output = NULL;
-
-    if( !(_file_Filtered_Output =fopen("_filtered_output.txt","w")))
-        return -1;
-
     FILE *_file_Output_Peaks = NULL;
-    if(!(_file_Output_Peaks = fopen("peaks.txt","w")))
-        return -1;
+    FILE *_file_Output_Peaks_Searchback = NULL;
+    FILE *_file_Output_Threshold1 = NULL;
 
+    if(!(_file_Input = openfile("ECG.txt")) ||
+            !(_file_Filtered_Output =fopen("filtered_output.txt","w")) ||
+            !(_file_Output_Peaks = fopen("peaks.txt","w")) ||
+            !(_file_Output_Peaks_Searchback = fopen("peaks_Searchback.txt","w")) ||
+            !(_file_Output_Threshold1 = fopen("threshold1_levels","w")))
+        return -1;
 
     /*
      * Check for OS section
@@ -107,7 +106,6 @@ int main()
         return -1;
     }
 
-
     initializeArray(_unfiltered_Buffer,_unfiltered_Buffer_Size,0);
     initializeArray(_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size,0);
     initializeArray(_HP_Filtered_Buffer,_HP_Filtered_Buffer_Size,0);
@@ -160,6 +158,13 @@ int main()
                         fprintf(_file_Output_Peaks,"%d; %d \n" ,
                                _peak_Time_Stamp,_peak_Value);
 
+
+                        if(_p._found_By_Searchback)
+                        {
+                            fprintf(_file_Output_Peaks_Searchback,"%d; %d \n" ,
+                                   _peak_Time_Stamp,_peak_Value);
+                        }
+
                         if(_peak_Value < 2000)
                             printf("WARNING:\n Low heartpeak detected at time: %d",_time_Stamp);
                     }
@@ -171,6 +176,8 @@ int main()
             }
             fprintf(_file_Filtered_Output," %d;%d\n",_time_Stamp,_filtered_Value);
 
+            int _threshold1_Value = _params->_THRESHOLD1;
+            fprintf(_file_Output_Threshold1,"%d;%d",_time_Stamp,_threshold1_Value);
         }
         if(_line_Size <= 0)
             _overhead--;
@@ -184,6 +191,8 @@ int main()
     fclose(_file_Input);
     fclose(_file_Filtered_Output);
     fclose(_file_Output_Peaks);
+    fclose(_file_Output_Peaks_Searchback);
+    fclose(_file_Output_Threshold1);
 
     return 0;
 }
