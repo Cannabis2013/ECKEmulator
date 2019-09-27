@@ -177,7 +177,7 @@ int main()
             fprintf(_file_Filtered_Output," %d;%d\n",_time_Stamp,_filtered_Value);
 
             int _threshold1_Value = _params->_THRESHOLD1;
-            fprintf(_file_Output_Threshold1,"%d;%d",_time_Stamp,_threshold1_Value);
+            fprintf(_file_Output_Threshold1,"%d;%d\n",_time_Stamp,_threshold1_Value);
         }
         if(_line_Size <= 0)
             _overhead--;

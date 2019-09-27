@@ -3,10 +3,7 @@
 void appendToArray(int *_seq, int total, int _value)
 {
     for (int var = 0; var < total - 1; ++var)
-    {
-        int val = _seq[var + 1];
-        _seq[var] = val;
-    }
+        _seq[var] = _seq[var + 1];
 
     _seq[total - 1] = _value;
 }

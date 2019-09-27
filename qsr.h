@@ -7,9 +7,11 @@
 
 #include "arraymanipulator.h"
 
-// Header file for QRS functionality 
-// it is recommended to use the structure "QRS_parameters"
-// to organize all variables and parameters
+/*
+ * Peak structure
+ *  - Peak found by searchback : _found_By_Searchback = 1
+ *  - Peak not found by searchback : _found_By_Searchback = 0
+ */
 
 typedef struct Peak
 {
