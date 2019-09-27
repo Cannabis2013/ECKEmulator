@@ -2,11 +2,18 @@
 #include "filters.h"
 #include <time.h>
 
-
-#define PRINT_OUTPUT
+#define TEST_SESSION
 
 int main()
 {
+#ifdef TEST_SESSION
+    clock_t _total_Runtime = clock();
+    clock_t _average_Calc_Runtime = 0;
+    clock_t _average_Contribution = 0;
+    clock_t _N = 0;
+
+#endif
+
     /*
      * File section:
      *  - Open/create files for output/plots
@@ -140,7 +147,9 @@ int main()
         if(_sample_Point >= _delay)
         {
             int _time_Stamp = (_sample_Point - _delay)*1000/_sample_Rate;
-
+#ifdef TEST_SESSION
+            _average_Contribution = clock();
+#endif
             if(peakDetection(_params,_filtered_Buffer,_time_Stamp))
             {
                 if(_current_R_Peak_Index < _params->_r_Peaks_Size)
@@ -151,10 +160,10 @@ int main()
                         int _peak_Value = _p._value;
 
                         int BPM = 60000/_params->_RR_AVG2[_params->_AVG2_Len - 1];
-
+#ifdef PRINT_SESSION
                         printf("Time: %d Peak value: %d BPM: %d \n" ,
                                _peak_Time_Stamp,_peak_Value,BPM);
-
+#endif
                         fprintf(_file_Output_Peaks,"%d; %d \n" ,
                                _peak_Time_Stamp,_peak_Value);
 
@@ -168,11 +177,20 @@ int main()
                         if(_peak_Value < 2000)
                             printf("WARNING:\n Low heartpeak detected at time: %d",_time_Stamp);
                     }
+#ifdef TEST_SESSION
+                _average_Calc_Runtime += clock() - _average_Contribution;
+                _average_Contribution = 0;
+                _N = _N + 1;
+#endif
                 }
+#ifdef TEST_SESSION
+                _average_Contribution = 0;
+#endif
+
+#ifdef PRINT_SESSION
                 if(_params->_prone_For_Warning > 4)
-                {
                     printf("Warning:\nIrregularities detected at time: %d\n", _time_Stamp);
-                }
+#endif
             }
             fprintf(_file_Filtered_Output," %d;%d\n",_time_Stamp,_filtered_Value);
 
@@ -193,6 +211,20 @@ int main()
     fclose(_file_Output_Peaks);
     fclose(_file_Output_Peaks_Searchback);
     fclose(_file_Output_Threshold1);
+#ifdef TEST_SESSION
+
+    _average_Calc_Runtime = _average_Calc_Runtime/_N;
+
+    FILE *_file_Test_Results = NULL;
+    if(!(_file_Test_Results = fopen("test_results.txt","w")))
+        return -1;
+#ifdef PRINT_SESSION
+    printf("\nTest session results:\nTotal run-time:    2%d clock cycles\n\n",(int)_total_Runtime);
+#endif
+    fprintf(_file_Test_Results,"Test session results:\nTotal CPU cycles run-time: %d clock cycles\n",(int)_total_Runtime);
+    fprintf(_file_Test_Results,"Average CPU cycles per peak detection: %d clock cycles\n",(int)_average_Calc_Runtime);
+    fclose(_file_Test_Results);
+#endif
 
     return 0;
 }
