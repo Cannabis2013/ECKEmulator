@@ -22,8 +22,6 @@ int main()
 
 #ifdef _WIN64
     return -1;
-#elif _WIN32_
-    return -1;
 #endif
 
     /*
