@@ -47,6 +47,7 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
     int _peak_Candidate = _buffer[1];
     int _preceding = _buffer[2];
     int _next = _buffer[0];
+    int _current_RR_Interval = (_params->_r_Peaks_Size != 0) ?  _time_Stamp - _last_Peak_Position : 0;
 
     if(_peak_Candidate > _preceding && _peak_Candidate > _next)
     {
@@ -61,7 +62,6 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
              * R-peak detected
              */
 
-            int _current_RR_Interval = (_params->_r_Peaks_Size != 0) ?  _time_Stamp - _last_Peak_Position : 0;
 
             if((_current_RR_Interval < _params->_RR_Low || _current_RR_Interval > _params->_RR_High))
             {
@@ -94,6 +94,16 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
          */
 
         _initialize_Parameters_Noise(_params,_p);
+    }
+
+    if(_current_RR_Interval > _params->_RR_Miss)
+    {
+        /*
+         * TODO: Perform search back procedure
+         * TODO: Reinitialize the _current_RR_Interval with regard to the new peak found
+         */
+
+        return _searchback_Operation(_params);
     }
 
     return false;

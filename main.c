@@ -2,7 +2,7 @@
 #include "filters.h"
 #include <time.h>
 
-#define TEST_SESSION
+#define PRINT_SESSION
 
 int main()
 {
@@ -97,6 +97,7 @@ int main()
     int _delay = _unfiltered_Buffer_Size + _LP_Filtered_Buffer_Size +
             _HP_Filtered_Buffer_Size + _SQ_Filtered_Buffer_Size;
 
+
     int _filtered_Buffer_Size = _delay;
     int *_filtered_Buffer = NULL;
 
@@ -150,16 +151,16 @@ int main()
 #ifdef TEST_SESSION
             _average_Contribution = clock();
 #endif
-            if(peakDetection(_params,_filtered_Buffer,_time_Stamp))
+            if(peakDetection(_params,_filtered_Buffer,_sample_Point))
             {
                 if(_current_R_Peak_Index < _params->_r_Peaks_Size)
                 {
                     while (_current_R_Peak_Index < _params->_r_Peaks_Size) {
                         Peak _p = _params->_r_Peaks[_current_R_Peak_Index++];
-                        int _peak_Time_Stamp = _p._time;
+                        int _peak_Time_Stamp = _p._time*4;
                         int _peak_Value = _p._value;
 
-                        int BPM = 60000/_params->_RR_AVG2[_params->_AVG2_Len - 1];
+                        int BPM = 60000/(_params->_RR_AVG2[_params->_AVG2_Len - 1]*4);
 #ifdef PRINT_SESSION
                         printf("Time: %d Peak value: %d BPM: %d \n" ,
                                _peak_Time_Stamp,_peak_Value,BPM);
@@ -175,7 +176,7 @@ int main()
                         }
 
                         if(_peak_Value < 2000)
-                            printf("WARNING:\n Low heartpeak detected at time: %d",_time_Stamp);
+                            printf("\nWARNING:\nLow heartpeak detected at time: %d\n\n",_time_Stamp);
                     }
 #ifdef TEST_SESSION
                 _average_Calc_Runtime += clock() - _average_Contribution;
@@ -189,11 +190,11 @@ int main()
 
 #ifdef PRINT_SESSION
                 if(_params->_prone_For_Warning > 4)
-                    printf("Warning:\nIrregularities detected at time: %d\n", _time_Stamp);
+                    printf("\nWarning:\nIrregularities detected at time: %d\n\n", _time_Stamp);
 #endif
             }
-            fprintf(_file_Filtered_Output," %d;%d\n",_time_Stamp,_filtered_Value);
 
+            fprintf(_file_Filtered_Output," %d;%d\n",_time_Stamp,_filtered_Value);
             int _threshold1_Value = _params->_THRESHOLD1;
             fprintf(_file_Output_Threshold1,"%d;%d\n",_time_Stamp,_threshold1_Value);
         }
