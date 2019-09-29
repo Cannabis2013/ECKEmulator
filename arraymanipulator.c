@@ -26,7 +26,7 @@ int average(const int * _input, int _input_Lenght,int _N)
     int _index_Of_last_Element = _input_Lenght - 1;
     int _n = _N;
 
-    for (int var = _index_Of_last_Element; _n >= 0 ; --var)
+    for (int var = _index_Of_last_Element; _n > 0 ; --var)
     {
         sum += _input[var];
         _n--;
