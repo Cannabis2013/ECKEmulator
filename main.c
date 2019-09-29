@@ -127,6 +127,7 @@ int main()
     int _overhead =_delay;
     int _sample_Point = 0;
     int _current_R_Peak_Index = 0;
+    int _sample_Rate = 250;
 
     while (_overhead >= 0)
     {
@@ -147,10 +148,11 @@ int main()
 
         if(_sample_Point >= _delay)
         {
+            int _time_Points = (_sample_Point - _delay)*1000/_sample_Rate;
 #ifdef TEST_SESSION
             _average_Contribution = clock();
 #endif
-            if(peakDetection(_params,_filtered_Buffer,_sample_Point))
+            if(peakDetection(_params,_filtered_Buffer,_time_Points))
             {
                 if(_current_R_Peak_Index < _params->_r_Peaks_Size)
                 {
@@ -159,24 +161,25 @@ int main()
                         int _peak_Time_Stamp = _p._time;
                         int _peak_Value = _p._value;
 
-                        int BPM = 60000/(_params->_RR_AVG1[_params->_AVG1_Len - 1]*4);
+                        int BPM = 60000/(_params->_RR_AVG1[_params->_AVG1_Len - 1]);
 #ifdef PRINT_SESSION
-                        printf("Time: %d Peak value: %d BPM: %d SB: %d\n" ,
-                               _peak_Time_Stamp*4,_peak_Value,BPM,_p._found_By_Searchback);
+                        printf("Time: %d Peak value: %d BPM: %d SB: %d RR_Low: %d RR_Miss: %d\n" ,
+                               _peak_Time_Stamp,_peak_Value,BPM,
+                               _p._found_By_Searchback,_params->_RR_Low, _params->_RR_Miss);
 #endif
                         fprintf(_file_Output_Peaks,"%d; %d \n" ,
-                               _peak_Time_Stamp*4,_peak_Value);
+                               _peak_Time_Stamp,_peak_Value);
 
 
                         if(_p._found_By_Searchback)
                         {
                             fprintf(_file_Output_Peaks_Searchback,"%d; %d \n" ,
-                                   _peak_Time_Stamp*4,_peak_Value);
+                                   _peak_Time_Stamp,_peak_Value);
                         }
 #ifdef PRINT_SESSION
 #ifdef SHOW_WARNINGS
                         if(_peak_Value < 2000)
-                            printf("\nWARNING:\nLow heartpeak detected at time: %d\n\n",_p._time*4);
+                            printf("\nWARNING:\nLow heartpeak detected at time: %d\n\n",_p._time);
 #endif
 #endif
                     }
@@ -193,14 +196,14 @@ int main()
 #ifdef PRINT_SESSION
 #ifdef SHOW_WARNINGS
                 if(_params->_prone_For_Warning > 4)
-                    printf("\nWarning:\nIrregularities detected at time: %d\n\n", _sample_Point*4);
+                    printf("\nWarning:\nIrregularities detected at time: %d\n\n", _time_Points);
 #endif
 #endif
             }
 
-            fprintf(_file_Filtered_Output," %d;%d\n",_sample_Point*4 -4*2,_filtered_Buffer[0]);
+            fprintf(_file_Filtered_Output," %d;%d\n",_time_Points -4*2,_filtered_Buffer[0]);
             int _threshold1_Value = _params->_THRESHOLD1;
-            fprintf(_file_Output_Threshold1,"%d;%d\n",_sample_Point*4 - 4*2,_threshold1_Value);
+            fprintf(_file_Output_Threshold1,"%d;%d\n",_time_Points - 4*2,_threshold1_Value);
         }
         if(_line_Size <= 0)
             _overhead--;

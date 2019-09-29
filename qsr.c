@@ -116,7 +116,8 @@ void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
         appendToArray(_params->_RR_AVG2,_params->_AVG2_Len,_current_RR_Interval);
     appendToArray(_params->_RR_AVG1,_params->_AVG1_Len,_current_RR_Interval);
 
-    int avg = !_is_Searchback ?  average(_params->_RR_AVG2,_params->_AVG2_Len,8) : average(_params->_RR_AVG1,_params->_AVG1_Len,8);
+    int avg = !_is_Searchback ?  average(_params->_RR_AVG2,_params->_AVG2_Len,8) :
+                                 average(_params->_RR_AVG1,_params->_AVG1_Len,8);
 
     _params->_RR_Low = (92*avg)/100;
     _params->_RR_High = (116*avg)/100;
