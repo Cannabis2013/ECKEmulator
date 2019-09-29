@@ -1,0 +1,3 @@
+Test session results:
+Total CPU cycles run-time: 2282 clock cycles
+Average CPU cycles per peak detection: 4 clock cycles
