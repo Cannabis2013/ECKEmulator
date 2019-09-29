@@ -50,8 +50,8 @@ int main()
      */
 
     QRS_params * const _params = malloc(sizeof (*_params));
-    _params->_SPKF = 0;
-    _params->_NPKF = 0;
+    _params->_SPKF = 4500;
+    _params->_NPKF = 2000;
     _params->_RR_Low = 0;
     _params->_RR_High = 0;
     _params->_RR_Miss = 0;
