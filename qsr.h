@@ -45,12 +45,12 @@ typedef struct QRS_params
 
 
 void _expand_Array(int mode, int *_peaks_Size, Peak _p, QRS_params *_params);
-Peak _searchback_Operation(QRS_params *_params, int _index);
+Peak _searchback_Operation(QRS_params *_params, int _is_Searchback);
 void initialize_Peaks(Peak* _peaks,int _peaks_Size);
 void appendPeak(Peak *_peaks, int _peaks_Size, Peak _new_Peak);
 
 void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback);
 void _initialize_Parameters_Noise(QRS_params *_params, Peak _p);
-bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp);
+bool peakDetection(QRS_params *_params, const int * _buffer, int _sample_Point);
 
 #endif // QSR_H
