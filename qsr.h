@@ -43,7 +43,7 @@ typedef struct QRS_params
    Peak *_n_Peaks;
 } QRS_params;
 
-
+int _initialize_QRS_Parameters(QRS_params *_params);
 void _expand_Array(int mode, int *_peaks_Size, Peak _p, QRS_params *_params);
 Peak _searchback_Operation(QRS_params *_params, int _is_Searchback);
 void initialize_Peaks(Peak* _peaks,int _peaks_Size);

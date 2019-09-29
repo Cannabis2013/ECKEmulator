@@ -50,35 +50,9 @@ int main()
      */
 
     QRS_params * const _params = malloc(sizeof (*_params));
-    _params->_SPKF = 4500;
-    _params->_NPKF = 2000;
-    _params->_RR_Low = 0;
-    _params->_RR_High = 0;
-    _params->_RR_Miss = 0;
-    _params->_THRESHOLD1 = 3500;
-    _params->_THRESHOLD2 = 1750;
-    _params->_last_Peak_Position = 0;
-    _params->_AVG1_Len = 8;
-    _params->_AVG2_Len = 8;
-    _params->_current_Average = 0;
-    _params->_r_Peaks_Size = 0;
-    _params->_n_Peaks_Size = 0;
-    _params->_prone_For_Warning = 0;
 
-    if(!(_params->_r_Peaks = malloc((unsigned) _params->_r_Peaks_Size*sizeof (*_params->_r_Peaks))) ||
-            !(_params->_n_Peaks = malloc((unsigned) _params->_n_Peaks_Size*sizeof (*_params->_n_Peaks))) ||
-            !(_params->_RR_AVG1 = malloc((unsigned)_params->_AVG1_Len*sizeof (int))) ||
-            !(_params->_RR_AVG2 = malloc((unsigned)_params->_AVG2_Len*sizeof (int))))
-    {
-        /*
-         * Not enough memmory
-         */
-
+    if(_initialize_QRS_Parameters(_params) == -1)
         return -1;
-    }
-
-    initializeArray(_params->_RR_AVG1,_params->_AVG1_Len,20);
-    initializeArray(_params->_RR_AVG2,_params->_AVG2_Len,20);
 
     /*
      * Buffer initialization section
