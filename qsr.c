@@ -52,7 +52,7 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
     if(_peak_Candidate > _preceding && _peak_Candidate > _next)
     {
         Peak _p;
-        _p._time = _time_Stamp;
+        _p._time = _time_Stamp + 4;
         _p._value = _peak_Candidate;
 
         _expand_Array(0,&_params->_n_Peaks_Size,_p,_params);

@@ -151,16 +151,16 @@ int main()
 #ifdef TEST_SESSION
             _average_Contribution = clock();
 #endif
-            if(peakDetection(_params,_filtered_Buffer,_sample_Point))
+            if(peakDetection(_params,_filtered_Buffer,_time_Stamp))
             {
                 if(_current_R_Peak_Index < _params->_r_Peaks_Size)
                 {
                     while (_current_R_Peak_Index < _params->_r_Peaks_Size) {
                         Peak _p = _params->_r_Peaks[_current_R_Peak_Index++];
-                        int _peak_Time_Stamp = _p._time*4;
+                        int _peak_Time_Stamp = _p._time;
                         int _peak_Value = _p._value;
 
-                        int BPM = 60000/(_params->_RR_AVG2[_params->_AVG2_Len - 1]*4);
+                        int BPM = 60000/(_params->_RR_AVG2[_params->_AVG2_Len - 1]);
 #ifdef PRINT_SESSION
                         printf("Time: %d Peak value: %d BPM: %d \n" ,
                                _peak_Time_Stamp,_peak_Value,BPM);
@@ -194,7 +194,7 @@ int main()
 #endif
             }
 
-            fprintf(_file_Filtered_Output," %d;%d\n",_time_Stamp,_filtered_Value);
+            fprintf(_file_Filtered_Output," %d;%d\n",_time_Stamp,_filtered_Buffer[0]);
             int _threshold1_Value = _params->_THRESHOLD1;
             fprintf(_file_Output_Threshold1,"%d;%d\n",_time_Stamp,_threshold1_Value);
         }
