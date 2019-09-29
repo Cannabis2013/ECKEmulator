@@ -101,24 +101,6 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _sample_Point)
         _initialize_Parameters_Noise(_params,_p);
     }
 
-    int _current_RR_Interval = _peak_Time - _params->_last_Peak_Position;
-
-    if(_current_RR_Interval > _params->_RR_Miss)
-    {
-        /*
-         * TODO: Perform search back procedure
-         * TODO: Reinitialize the _current_RR_Interval accordingly to the new peak found
-         */
-
-        Peak _p = _searchback_Operation(_params,1);
-        if(_p._value == -1)
-            return false;
-
-        _expand_Array(1,&_params->_r_Peaks_Size,_p,_params);
-        _initialize_Parameters_R(_params,_p,true);
-        return true;
-    }
-
     return false;
 }
 
