@@ -71,7 +71,7 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
                      * TODO: Perform search back procedure
                      * TODO: Reinitialize the _current_RR_Interval accordingly to the new peak found
                      */
-                    _p = _searchback_Operation(_params);
+                    _p = _searchback_Operation(_params,0);
                     if(_p._value == -1)
                         return false;
                     _expand_Array(1,&_params->_r_Peaks_Size,_p,_params);
@@ -109,11 +109,8 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
          * TODO: Reinitialize the _current_RR_Interval accordingly to the new peak found
          */
 
-        Peak _p = _searchback_Operation(_params);
+        Peak _p = _searchback_Operation(_params,0);
         if(_p._value == -1)
-            return false;
-        int _peak_Interval = _p._time - _params->_last_Peak_Position;
-        if(_peak_Interval < _params->_RR_Low)
             return false;
 
         _expand_Array(1,&_params->_r_Peaks_Size,_p,_params);
@@ -151,26 +148,28 @@ void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
     _params->_prone_For_Warning = 0;
 }
 
-Peak _searchback_Operation(QRS_params *_params)
+Peak _searchback_Operation(QRS_params *_params,int _index)
 {
     int _last_Peak_Position = _params->_last_Peak_Position;
     int _threshold_2 = _params->_THRESHOLD2;
-    for (int var = _params->_n_Peaks_Size - 1; var >= 0; --var) {
+    Peak _temp;
+    _temp._value = -1;
+    _temp._time = -1;
+    _temp._found_By_Searchback = -1;
+    for (int var = _params->_n_Peaks_Size - 1 - _index; var >= 0; --var) {
         Peak _n_Peak = _params->_n_Peaks[var];
+        int _peak_Value = _n_Peak._value;
         int _peak_Time = _n_Peak._time;
         if(_n_Peak._value > _threshold_2  && _peak_Time > _last_Peak_Position)
         {
-            _n_Peak._found_By_Searchback = 1;
-            return _n_Peak;
+            int _peak_Interval = _n_Peak._time - _params->_last_Peak_Position;
+            if(_peak_Interval > _params->_RR_Low && _peak_Value > _temp._value)
+                _temp = _n_Peak;
         }
     }
 
-    Peak _null_Peak;
-    _null_Peak._time = -1;
-    _null_Peak._value = -1;
-    _null_Peak._found_By_Searchback = -1;
-
-    return _null_Peak;
+    _temp._found_By_Searchback = 1;
+    return _temp;
 }
 
 void _initialize_Parameters_Noise(QRS_params *_params, Peak _p)

@@ -45,7 +45,7 @@ typedef struct QRS_params
 
 
 void _expand_Array(int mode, int *_peaks_Size, Peak _p, QRS_params *_params);
-Peak _searchback_Operation(QRS_params *_params);
+Peak _searchback_Operation(QRS_params *_params, int _index);
 void initialize_Peaks(Peak* _peaks,int _peaks_Size);
 void appendPeak(Peak *_peaks, int _peaks_Size, Peak _new_Peak);
 

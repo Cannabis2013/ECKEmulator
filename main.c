@@ -176,7 +176,7 @@ int main()
                         }
 
                         if(_peak_Value < 2000)
-                            printf("\nWARNING:\nLow heartpeak detected at time: %d\n\n",_time_Stamp + 4);
+                            printf("\nWARNING:\nLow heartpeak detected at time: %d\n\n",_p._time);
                     }
 #ifdef TEST_SESSION
                 _average_Calc_Runtime += clock() - _average_Contribution;
