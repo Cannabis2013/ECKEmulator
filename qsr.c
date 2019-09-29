@@ -72,12 +72,12 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _sample_Point)
                      * TODO: Reinitialize the _current_RR_Interval accordingly to the new peak found
                      */
 
-                    _p = _searchback_Operation(_params,1);
-                    if(_p._value == -1)
+                    Peak _P = _searchback_Operation(_params,1);
+                    if(_P._value == -1)
                         return false;
-                    _expand_Array(1,&_params->_r_Peaks_Size,_p,_params);
-                    _initialize_Parameters_R(_params,_p,true);
-                    return true;
+                    _expand_Array(1,&_params->_r_Peaks_Size,_P,_params);
+                    _initialize_Parameters_R(_params,_P,true);
+                    goto jmp;
                 }
 
                 /*
@@ -88,6 +88,7 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _sample_Point)
                 _params->_prone_For_Warning = _params->_prone_For_Warning + 1;
                 return false;
             }
+            jmp:;
             _p = _searchback_Operation(_params,0);
             if(_p._value == -1)
                 return false;
