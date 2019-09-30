@@ -45,9 +45,13 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
 {
     int _last_Peak_Position = _params->_last_Peak_Position;
     int _peak_Candidate = _buffer[1];
-    int _preceding = _buffer[2];
-    int _next = _buffer[0];
+    int _preceding = _buffer[0];
+    int _next = _buffer[2];
     int _current_RR_Interval = (_params->_r_Peaks_Size != 0) ?  (_time_Stamp - 8) - _last_Peak_Position : 0;
+    if(_time_Stamp == 10024)
+    {
+        int a = 0;
+    }
 
     if(_peak_Candidate > _preceding && _peak_Candidate > _next)
     {
@@ -124,9 +128,9 @@ void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
     int avg = _is_Searchback ? average(_params->_RR_AVG1,_params->_AVG1_Len,8):
                                average(_params->_RR_AVG2,_params->_AVG2_Len,8);
 
-    _params->_RR_Low = (92*avg)/100;
+    _params->_RR_Low = (80*avg)/100;
     _params->_RR_High = (116*avg)/100;
-    _params->_RR_Miss = (166*avg)/100;
+    _params->_RR_Miss = (180*avg)/100;
 
     _params->_current_Average = avg;
 
