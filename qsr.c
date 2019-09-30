@@ -150,7 +150,7 @@ void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
                                average(_params->_RR_AVG2,_params->_AVG2_Len,8);
 
     _params->_RR_Low = (80*avg)/100;
-    _params->_RR_High = (120*avg)/100;
+    _params->_RR_High = (116*avg)/100;
     _params->_RR_Miss = (180*avg)/100;
 
     _params->_current_Average = avg;
