@@ -163,7 +163,7 @@ int main()
 
                         int BPM = 60000/(_params->_RR_AVG2[_params->_AVG2_Len - 1]);
 #ifdef PRINT_SESSION
-                        printf("Time: %d Peak value: %d BPM: %d \n" ,
+                        printf("\nTime: %d Peak value: %d BPM: %d" ,
                                _peak_Time_Stamp,_peak_Value,BPM);
 #endif
                         fprintf(_file_Output_Peaks,"%d, %d \n" ,
@@ -177,9 +177,9 @@ int main()
                         }
 #ifdef PRINT_WARNINGS
                         if(_peak_Value < 2000)
-                            printf("\nWARNING:Low heartpeak detected at time: %d\n\n",_peak_Time_Stamp);
-                        if(_params->_prone_For_Warning > 4)
-                            printf("Warning: Irregularities detected at time: %d\n\n", _peak_Time_Stamp);
+                            printf(" WARNING:Low heartpeak detected at time: %d",_peak_Time_Stamp);
+                        if(_params->_prone_For_Warning > 5)
+                            printf(" Warning: Irregularities detected at time: %d", _peak_Time_Stamp);
 #endif
                     }
 #ifdef TEST_SESSION

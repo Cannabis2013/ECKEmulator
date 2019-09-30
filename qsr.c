@@ -47,7 +47,7 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
     int _peak_Candidate = _buffer[1];
     int _preceding = _buffer[0];
     int _next = _buffer[2];
-    int _current_RR_Interval = (_time_Stamp - 8) - _last_Peak_Position;
+    int _current_RR_Interval = (_time_Stamp - 4) - _last_Peak_Position;
 
     if(_peak_Candidate > _preceding && _peak_Candidate > _next)
     {
@@ -70,18 +70,29 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
             if(_P._value == -1)
                 return false;
 
+            _current_RR_Interval = _P._time - _params->_last_Peak_Position;
+            if(_current_RR_Interval < _params->_RR_Low || _current_RR_Interval > _params->_RR_High)
+            {
+                _params->_prone_For_Warning = _params->_prone_For_Warning + 1;
+                _expand_Array(1,&_params->_r_Peaks_Size,_P,_params);
+                _initialize_Parameters_R(_params,_P,true);
+                return true;
+            }
             _expand_Array(1,&_params->_r_Peaks_Size,_P,_params);
             _initialize_Parameters_R(_params,_P,true);
             return true;
         }
 
-        _expand_Array(1,&_params->_r_Peaks_Size,_P,_params);
-        _initialize_Parameters_R(_params,_P,false);
+        _current_RR_Interval = _P._time - _params->_last_Peak_Position;
         if(_current_RR_Interval < _params->_RR_Low || _current_RR_Interval > _params->_RR_High)
         {
             _params->_prone_For_Warning = _params->_prone_For_Warning + 1;
+            _expand_Array(1,&_params->_r_Peaks_Size,_P,_params);
+            _initialize_Parameters_R(_params,_P,false);
             return true;
         }
+        _expand_Array(1,&_params->_r_Peaks_Size,_P,_params);
+        _initialize_Parameters_R(_params,_P,false);
         _params->_prone_For_Warning = 0;
         return true;
     }
