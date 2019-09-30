@@ -8,13 +8,10 @@ SOURCES += \
         main.c\
         filters.c\
         sensor.c\
-        qsr.c \
-        signalprocessor.c
-
+        qsr.c
 HEADERS += \
         arraymanipulator.h \
         filters.h\
         sensor.h\
-        qsr.h \
-        signalprocessor.h
+        qsr.h
 
