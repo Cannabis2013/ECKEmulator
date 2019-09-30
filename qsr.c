@@ -176,13 +176,13 @@ void _initialize_Parameters_Noise(QRS_params *_params, Peak _p)
 int _initialize_QRS_Parameters(QRS_params *_params)
 {
 
-    _params->_SPKF = 4500;
-    _params->_NPKF = 2000;
-    _params->_RR_Low = 0;
-    _params->_RR_High = 0;
-    _params->_RR_Miss = 0;
-    _params->_THRESHOLD1 = 3500;
-    _params->_THRESHOLD2 = 1750;
+    _params->_SPKF = 5000;
+    _params->_NPKF = 4750;
+    _params->_RR_Low = 20;
+    _params->_RR_High = 120;
+    _params->_RR_Miss = 180;
+    _params->_THRESHOLD1 = 5000;
+    _params->_THRESHOLD2 = 2500;
     _params->_last_Peak_Position = 0;
     _params->_AVG1_Len = 8;
     _params->_AVG2_Len = 8;
@@ -203,8 +203,8 @@ int _initialize_QRS_Parameters(QRS_params *_params)
         return -1;
     }
 
-    initializeArray(_params->_RR_AVG1,_params->_AVG1_Len,20);
-    initializeArray(_params->_RR_AVG2,_params->_AVG2_Len,20);
+    initializeArray(_params->_RR_AVG1,_params->_AVG1_Len,70);
+    initializeArray(_params->_RR_AVG2,_params->_AVG2_Len,70);
 
     return 0;
 }

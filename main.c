@@ -141,13 +141,13 @@ int main()
                                _peak_Time_Stamp,_peak_Value,BPM,
                                _p._found_By_Searchback,_params->_RR_Low, _params->_RR_Miss);
 #endif
-                        fprintf(_file_Output_Peaks,"%d; %d \n" ,
+                        fprintf(_file_Output_Peaks,"%d, %d \n" ,
                                _peak_Time_Stamp,_peak_Value);
 
 
                         if(_p._found_By_Searchback)
                         {
-                            fprintf(_file_Output_Peaks_Searchback,"%d; %d \n" ,
+                            fprintf(_file_Output_Peaks_Searchback,"%d, %d \n" ,
                                    _peak_Time_Stamp,_peak_Value);
                         }
 #ifdef PRINT_SESSION
@@ -175,9 +175,9 @@ int main()
 #endif
             }
 
-            fprintf(_file_Filtered_Output," %d;%d\n",_time_Points -4*2,_filtered_Buffer[0]);
+            fprintf(_file_Filtered_Output," %d,%d\n",_time_Points -4*2,_filtered_Buffer[0]);
             int _threshold1_Value = _params->_THRESHOLD1;
-            fprintf(_file_Output_Threshold1,"%d;%d\n",_time_Points - 4*2,_threshold1_Value);
+            fprintf(_file_Output_Threshold1,"%d,%d\n",_time_Points - 4*2,_threshold1_Value);
         }
         if(_line_Size <= 0)
             _overhead--;
