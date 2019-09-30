@@ -1,4 +1,3 @@
-#include "sensor.h"
 #include "filters.h"
 #include <time.h>
 
@@ -50,35 +49,9 @@ int main()
      */
 
     QRS_params * const _params = malloc(sizeof (*_params));
-    _params->_SPKF = 0;
-    _params->_NPKF = 0;
-    _params->_RR_Low = 10;
-    _params->_RR_High = 50;
-    _params->_RR_Miss = 500;
-    _params->_THRESHOLD1 = 2500;
-    _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
-    _params->_last_Peak_Position = 0;
-    _params->_AVG1_Len = 8;
-    _params->_AVG2_Len = 8;
-    _params->_current_Average = 0;
-    _params->_r_Peaks_Size = 0;
-    _params->_n_Peaks_Size = 0;
-    _params->_prone_For_Warning = 0;
-
-    if(!(_params->_r_Peaks = malloc((unsigned) _params->_r_Peaks_Size*sizeof (*_params->_r_Peaks))) ||
-            !(_params->_n_Peaks = malloc((unsigned) _params->_n_Peaks_Size*sizeof (*_params->_n_Peaks))) ||
-            !(_params->_RR_AVG1 = malloc((unsigned)_params->_AVG1_Len*sizeof (int))) ||
-            !(_params->_RR_AVG2 = malloc((unsigned)_params->_AVG2_Len*sizeof (int))))
-    {
-        /*
-         * Not enough memmory
-         */
-
-        return -1;
-    }
-
-    initializeArray(_params->_RR_AVG1,_params->_AVG1_Len,0);
-    initializeArray(_params->_RR_AVG2,_params->_AVG2_Len,0);
+    int _initialize_Success = _initialize_QRS_Parameters(_params);
+    if(!_initialize_Success)
+        return _initialize_Success;
 
     /*
      * Buffer initialization section
@@ -86,45 +59,17 @@ int main()
      *      (2) Initialize buffer arrays with initial values to avoid undefined behaviour
      */
 
-    int _unfiltered_Buffer_Size = 13;
-    int *_unfiltered_Buffer = NULL;
-    int _LP_Filtered_Buffer_Size = 33;
-    int *_LP_Filtered_Buffer = NULL;
-    int _HP_Filtered_Buffer_Size = 5;
-    int *_HP_Filtered_Buffer = NULL;
-    int _SQ_Filtered_Buffer_Size = 30;
-    int *_SQ_Filtered_Buffer = NULL;
+    BUFFER_Arrays *_buffers = malloc(sizeof (*_buffers));
 
-    int _delay = _unfiltered_Buffer_Size + _LP_Filtered_Buffer_Size +
-            _HP_Filtered_Buffer_Size + _SQ_Filtered_Buffer_Size;
-
-
-    int _filtered_Buffer_Size = _delay;
-    int *_filtered_Buffer = NULL;
-
-    if(!(_unfiltered_Buffer = malloc((unsigned) _unfiltered_Buffer_Size*sizeof (int))) ||
-            !(_LP_Filtered_Buffer = malloc((unsigned)_LP_Filtered_Buffer_Size*sizeof (int))) ||
-            !(_HP_Filtered_Buffer = malloc((unsigned) _HP_Filtered_Buffer_Size*sizeof (int))) ||
-            !(_SQ_Filtered_Buffer = malloc((unsigned) _SQ_Filtered_Buffer_Size*sizeof (int))) ||
-            !(_filtered_Buffer = malloc((unsigned) _filtered_Buffer_Size*sizeof (int))))
-    {
-        /*
-         *  Not enough memmory
-         */
-
-        return -1;
-    }
-
-    initializeArray(_unfiltered_Buffer,_unfiltered_Buffer_Size,0);
-    initializeArray(_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size,0);
-    initializeArray(_HP_Filtered_Buffer,_HP_Filtered_Buffer_Size,0);
-    initializeArray(_SQ_Filtered_Buffer,_SQ_Filtered_Buffer_Size,0);
+    _initialize_Success = _initialize_Buffers(_buffers);
+    if(!_initialize_Success)
+        return _initialize_Success;
 
     /*
      * Sample section and peak section
      */
 
-    int _overhead =_delay;
+    int _overhead =_buffers->_delay;
     int _sample_Point = 0;
     int _sample_Rate = 250;
     int _current_R_Peak_Index = 0;
@@ -134,25 +79,27 @@ int main()
         int _line_Size = 1;
         int _filtered_Value = 0;
 
-        appendToArray(_unfiltered_Buffer,_unfiltered_Buffer_Size,getNextData(_file_Input,&_line_Size));
+        appendToArray(_buffers->_unfiltered_Buffer,
+                      _buffers->_unfiltered_Buffer_Size,
+                      getNextData(_file_Input,&_line_Size));
 
-        _filtered_Value = lowPassFilter(_unfiltered_Buffer,_unfiltered_Buffer_Size,_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size);
-        appendToArray(_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size,_filtered_Value);
-        _filtered_Value = highPassFilter(_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size,_HP_Filtered_Buffer[4]);
-        appendToArray(_HP_Filtered_Buffer,_HP_Filtered_Buffer_Size,_filtered_Value);
-        _filtered_Value = derivative(_HP_Filtered_Buffer,_HP_Filtered_Buffer_Size);
+        _filtered_Value = lowPassFilter(_buffers);
+        appendToArray(_buffers->_LP_Filtered_Buffer,_buffers->_LP_Filtered_Buffer_Size,_filtered_Value);
+        _filtered_Value = highPassFilter(_buffers,_buffers->_HP_Filtered_Buffer[4]);
+        appendToArray(_buffers->_HP_Filtered_Buffer,_buffers->_HP_Filtered_Buffer_Size,_filtered_Value);
+        _filtered_Value = derivative(_buffers);
         _filtered_Value *= _filtered_Value;
-        appendToArray(_SQ_Filtered_Buffer,_SQ_Filtered_Buffer_Size,_filtered_Value);
-        _filtered_Value = _moving_Window_Integrator(_SQ_Filtered_Buffer,_SQ_Filtered_Buffer_Size);
-        appendToArray(_filtered_Buffer,_filtered_Buffer_Size,_filtered_Value);
+        appendToArray(_buffers->_SQ_Filtered_Buffer,_buffers->_SQ_Filtered_Buffer_Size,_filtered_Value);
+        _filtered_Value = _moving_Window_Integrator(_buffers);
+        appendToArray(_buffers->_filtered_Buffer,_buffers->_filtered_Buffer_Size,_filtered_Value);
 
-        if(_sample_Point >= _delay)
+        if(_sample_Point >= _buffers->_delay)
         {
-            int _time_Stamp = (_sample_Point - _delay)*1000/_sample_Rate;
+            int _time_Stamp = (_sample_Point - _buffers->_delay)*1000/_sample_Rate;
 #ifdef TEST_SESSION
             _average_Contribution = clock();
 #endif
-            if(peakDetection(_params,_filtered_Buffer,_time_Stamp))
+            if(peakDetection(_params,_buffers->_filtered_Buffer,_time_Stamp))
             {
                 if(_current_R_Peak_Index < _params->_r_Peaks_Size)
                 {
@@ -177,7 +124,7 @@ int main()
                         }
 #ifdef PRINT_WARNINGS
                         if(_peak_Value < 2000)
-                            printf(" WARNING:Low heartpeak detected at time: %d",_peak_Time_Stamp);
+                            printf(" WARNING: Low heartpeak detected at time: %d",_peak_Time_Stamp);
                         if(_params->_prone_For_Warning > 5)
                             printf(" Warning: Irregularities detected at time: %d", _peak_Time_Stamp);
 #endif
@@ -193,7 +140,7 @@ int main()
 #endif
             }
 
-            fprintf(_file_Filtered_Output," %d,%d\n",_time_Stamp,_filtered_Buffer[2]);
+            fprintf(_file_Filtered_Output," %d,%d\n",_time_Stamp,_buffers->_filtered_Buffer[2]);
             int _threshold1_Value = _params->_THRESHOLD1;
             fprintf(_file_Output_Threshold1,"%d,%d\n",_time_Stamp,_threshold1_Value);
         }
@@ -201,6 +148,8 @@ int main()
             _overhead--;
         _sample_Point++;
     }
+
+    printf("\n");
 
     /*
      * Close the files

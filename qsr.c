@@ -159,3 +159,39 @@ void _initialize_Parameters_Noise(QRS_params *_params, Peak _p)
     _params->_THRESHOLD1 = _params->_NPKF + (_SPKF - _params->_NPKF)/4;
     _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
 }
+
+
+int _initialize_QRS_Parameters(QRS_params *_params)
+{
+    _params->_SPKF = 0;
+    _params->_NPKF = 0;
+    _params->_RR_Low = 10;
+    _params->_RR_High = 50;
+    _params->_RR_Miss = 500;
+    _params->_THRESHOLD1 = 2500;
+    _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
+    _params->_last_Peak_Position = 0;
+    _params->_AVG1_Len = 8;
+    _params->_AVG2_Len = 8;
+    _params->_current_Average = 0;
+    _params->_r_Peaks_Size = 0;
+    _params->_n_Peaks_Size = 0;
+    _params->_prone_For_Warning = 0;
+
+    if(!(_params->_r_Peaks = malloc((unsigned) _params->_r_Peaks_Size*sizeof (*_params->_r_Peaks))) ||
+            !(_params->_n_Peaks = malloc((unsigned) _params->_n_Peaks_Size*sizeof (*_params->_n_Peaks))) ||
+            !(_params->_RR_AVG1 = malloc((unsigned)_params->_AVG1_Len*sizeof (int))) ||
+            !(_params->_RR_AVG2 = malloc((unsigned)_params->_AVG2_Len*sizeof (int))))
+    {
+        /*
+         * Not enough memmory
+         */
+
+        return 0;
+    }
+
+    initializeArray(_params->_RR_AVG1,_params->_AVG1_Len,0);
+    initializeArray(_params->_RR_AVG2,_params->_AVG2_Len,0);
+
+    return 1;
+}
