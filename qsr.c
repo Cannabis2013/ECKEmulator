@@ -99,9 +99,13 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
 
     if(_current_RR_Interval > _params->_RR_Miss)
     {
-        Peak _P = _searchback_Operation(_params,1);
+        Peak _P = _searchback_Operation(_params,0);
         if(_P._value == -1)
-            return false;
+        {
+            _P = _searchback_Operation(_params,1);
+            if(_P._value == -1)
+                return false;
+        }
         _expand_Array(1,&_params->_r_Peaks_Size,_P,_params);
         _initialize_Parameters_R(_params,_P,true);
 
