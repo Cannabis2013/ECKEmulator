@@ -51,11 +51,11 @@ int main()
     QRS_params * const _params = malloc(sizeof (*_params));
     _params->_SPKF = 0;
     _params->_NPKF = 0;
-    _params->_RR_Low = 0;
-    _params->_RR_High = 0;
-    _params->_RR_Miss = 0;
-    _params->_THRESHOLD1 = 5000;
-    _params->_THRESHOLD2 = 2500;
+    _params->_RR_Low = 10;
+    _params->_RR_High = 50;
+    _params->_RR_Miss = 500;
+    _params->_THRESHOLD1 = 2500;
+    _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
     _params->_last_Peak_Position = 0;
     _params->_AVG1_Len = 8;
     _params->_AVG2_Len = 8;
@@ -160,7 +160,7 @@ int main()
                         int _peak_Time_Stamp = _p._time;
                         int _peak_Value = _p._value;
 
-                        int BPM = 60000/(_params->_RR_AVG1[_params->_AVG1_Len - 1]);
+                        int BPM = 60000/(_params->_RR_AVG2[_params->_AVG2_Len - 1]);
 #ifdef PRINT_SESSION
                         printf("Time: %d Peak value: %d BPM: %d \n" ,
                                _peak_Time_Stamp,_peak_Value,BPM);
