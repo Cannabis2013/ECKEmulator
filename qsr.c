@@ -110,7 +110,7 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _sample_Point)
 void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
 {
     int _current_RR_Interval = _p._time - _params->_last_Peak_Position;
-    _params->_SPKF = !_is_Searchback ?  _p._value/8 +(7*_params->_SPKF)/8 : _p._value/4 +(3*_params->_SPKF)/4 ;
+    _params->_SPKF = !_is_Searchback ?  (_p._value + 7*_params->_SPKF)/8 : (_p._value +3*_params->_SPKF)/4 ;
 
     if(!_is_Searchback)
         appendToArray(_params->_RR_AVG2,_params->_AVG2_Len,_current_RR_Interval);
@@ -168,7 +168,7 @@ void _initialize_Parameters_Noise(QRS_params *_params, Peak _p)
     int _NPKF = _params->_NPKF;
     int _SPKF = _params->_SPKF;
 
-    _params->_NPKF = _p._value/8 + (7*_NPKF)/8;
+    _params->_NPKF = (_p._value + 7*_NPKF)/8;
     _params->_THRESHOLD1 = _params->_NPKF + (_SPKF - _params->_NPKF)/4;
     _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
 }
@@ -205,4 +205,6 @@ int _initialize_QRS_Parameters(QRS_params *_params)
 
     initializeArray(_params->_RR_AVG1,_params->_AVG1_Len,20);
     initializeArray(_params->_RR_AVG2,_params->_AVG2_Len,20);
+
+    return 0;
 }
