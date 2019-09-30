@@ -74,11 +74,15 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
             _initialize_Parameters_R(_params,_P,true);
             return true;
         }
-        if(_current_RR_Interval < _params->_RR_Low || _current_RR_Interval > _params->_RR_High)
-            _params->_prone_For_Warning = _params->_prone_For_Warning + 1;
+
         _expand_Array(1,&_params->_r_Peaks_Size,_P,_params);
         _initialize_Parameters_R(_params,_P,false);
-
+        if(_current_RR_Interval < _params->_RR_Low || _current_RR_Interval > _params->_RR_High)
+        {
+            _params->_prone_For_Warning = _params->_prone_For_Warning + 1;
+            return true;
+        }
+        _params->_prone_For_Warning = 0;
         return true;
     }
 
@@ -125,16 +129,14 @@ void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
 
     _params->_RR_Low = (80*avg)/100;
     _params->_RR_High = (116*avg)/100;
-    _params->_RR_Miss = (180*avg)/100;
+    _params->_RR_Miss = (166*avg)/100;
 
     _params->_current_Average = avg;
 
-    _params->_THRESHOLD1 = _params->_NPKF + (_params->_SPKF - _params->_NPKF);
+    _params->_THRESHOLD1 = _params->_NPKF + (_params->_SPKF - _params->_NPKF)/4;
     _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
 
     _params->_last_Peak_Position = _p._time;
-
-    _params->_prone_For_Warning = 0;
 }
 
 void _initialize_Parameters_Noise(QRS_params *_params, Peak _p)

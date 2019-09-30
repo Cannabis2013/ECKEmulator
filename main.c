@@ -3,6 +3,7 @@
 #include <time.h>
 
 #define PRINT_SESSION
+#define PRINT_WARNINGS
 
 int main()
 {
@@ -174,9 +175,12 @@ int main()
                             fprintf(_file_Output_Peaks_Searchback,"%d, %d \n" ,
                                    _peak_Time_Stamp,_peak_Value);
                         }
-
+#ifdef PRINT_WARNINGS
                         if(_peak_Value < 2000)
                             printf("\nWARNING:Low heartpeak detected at time: %d\n\n",_peak_Time_Stamp);
+                        if(_params->_prone_For_Warning > 4)
+                            printf("Warning: Irregularities detected at time: %d\n\n", _peak_Time_Stamp);
+#endif
                     }
 #ifdef TEST_SESSION
                 _average_Calc_Runtime += clock() - _average_Contribution;
@@ -186,11 +190,6 @@ int main()
                 }
 #ifdef TEST_SESSION
                 _average_Contribution = 0;
-#endif
-
-#ifdef PRINT_SESSION
-                if(_params->_prone_For_Warning > 4)
-                    printf("Warning: Irregularities detected at time: %d\n\n", _time_Stamp);
 #endif
             }
 
