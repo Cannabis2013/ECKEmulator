@@ -134,7 +134,7 @@ void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
     _params->_current_Average = avg;
 
     _params->_THRESHOLD1 = _params->_NPKF + (_params->_SPKF - _params->_NPKF);
-    _params->_THRESHOLD2 = _params->_THRESHOLD1/4;
+    _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
 
     _params->_last_Peak_Position = _p._time;
 }
