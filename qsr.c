@@ -47,12 +47,12 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
     int _peak_Candidate = _buffer[1];
     int _preceding = _buffer[2];
     int _next = _buffer[0];
-    int _current_RR_Interval = (_params->_r_Peaks_Size != 0) ?  _time_Stamp - _last_Peak_Position : 0;
+    int _current_RR_Interval = (_params->_r_Peaks_Size != 0) ?  (_time_Stamp - 8) - _last_Peak_Position : 0;
 
     if(_peak_Candidate > _preceding && _peak_Candidate > _next)
     {
         Peak _p;
-        _p._time = _time_Stamp + 4;
+        _p._time = _time_Stamp - 4;
         _p._value = _peak_Candidate;
 
         _expand_Array(0,&_params->_n_Peaks_Size,_p,_params);
@@ -67,11 +67,6 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
             {
                 if(_current_RR_Interval > _params->_RR_Miss)
                 {
-                    /*
-                     * TODO: Perform search back procedure
-                     * TODO: Reinitialize the _current_RR_Interval with regard to the new peak found
-                     */
-
                     Peak _P = _searchback_Operation(_params,1);
                     if(_P._value == -1)
                         return false;
@@ -82,7 +77,7 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
 
                 /*
                  * WARNING:
-                 *      Interval falls out of the interval-limit and the system is prone for a warning.
+                 *      Interval falls out of the interval-limit and the client is prone for a warning.
                  */
 
                 _params->_prone_For_Warning = _params->_prone_For_Warning + 1;
@@ -105,11 +100,6 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
 
     if(_current_RR_Interval > _params->_RR_Miss)
     {
-        /*
-         * TODO: Perform search back procedure
-         * TODO: Reinitialize the _current_RR_Interval with regard to the new peak found
-         */
-
         Peak _P = _searchback_Operation(_params,1);
         if(_P._value == -1)
             return false;
@@ -151,7 +141,7 @@ void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
 Peak _searchback_Operation(QRS_params *_params, int _is_Searchback)
 {
     int _last_Peak_Position = _params->_last_Peak_Position;
-    int _threshold =  _is_Searchback ? _params->_THRESHOLD1 : _params->_THRESHOLD2;
+    int _threshold =  _is_Searchback ? _params->_THRESHOLD2 : _params->_THRESHOLD1;
     Peak temp;
     temp._value = -1;
     temp._time = -1;
