@@ -54,8 +54,8 @@ int main()
     _params->_RR_Low = 0;
     _params->_RR_High = 0;
     _params->_RR_Miss = 0;
-    _params->_THRESHOLD1 = 0;
-    _params->_THRESHOLD2 = 0;
+    _params->_THRESHOLD1 = 5000;
+    _params->_THRESHOLD2 = 2500;
     _params->_last_Peak_Position = 0;
     _params->_AVG1_Len = 8;
     _params->_AVG2_Len = 8;
