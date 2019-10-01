@@ -177,6 +177,7 @@ int main()
     fclose(_file_Output_Peaks_Searchback);
     fclose(_file_Output_Threshold1);
     fclose(_file_Output_Irregularities);
+    fclose(_file_Output_Low_Peaks);
 
 #ifdef TEST_SESSION
 
