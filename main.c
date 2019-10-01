@@ -133,15 +133,18 @@ int main()
                                    _peak_Time_Stamp,_peak_Value);
                         }
 #ifdef PRINT_WARNINGS
+                        int _align = 0;
                         if(_peak_Value < 2000)
                         {
+                            _align = 100;
                             printf(" WARNING: Low heartpeak");
-                            fprintf(_file_Output_Low_Peaks,"%d,%d",_peak_Time_Stamp,1);
+                            fprintf(_file_Output_Low_Peaks,"%d,%d",_peak_Time_Stamp,_p._value + _align);
                         }
                         if(_params->_prone_For_Warning > 5)
                         {
+                            _align += 50;
                             printf(" Warning: Irregular heartbeat");
-                            fprintf(_file_Output_Irregularities,"%d,%d",_peak_Time_Stamp,1);
+                            fprintf(_file_Output_Irregularities,"%d,%d",_peak_Time_Stamp,_p._value + _align);
                         }
 #endif
                     }
