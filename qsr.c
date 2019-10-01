@@ -142,7 +142,7 @@ void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
     int avg = _is_Searchback ? average(_params->_RR_AVG1,_params->_AVG1_Len,8):
                                average(_params->_RR_AVG2,_params->_AVG2_Len,8);
 
-    _params->_RR_Low = (90*avg)/100;
+    _params->_RR_Low = (91*avg)/100;
     _params->_RR_High = (116*avg)/100;
     _params->_RR_Miss = (166*avg)/100;
 
