@@ -25,13 +25,19 @@ int main()
     FILE *_file_Output_Peaks = NULL;
     FILE *_file_Output_Peaks_Searchback = NULL;
     FILE *_file_Output_Threshold1 = NULL;
+    FILE *_file_Output_Low_Peaks = NULL;
+    FILE *_file_Output_Irregularities = NULL;
 
     if(!(_file_Input = openfile("ECG.txt")) ||
             !(_file_Filtered_Output =fopen("filtered_output.txt","w")) ||
             !(_file_Output_Peaks = fopen("peaks.txt","w")) ||
             !(_file_Output_Peaks_Searchback = fopen("peaks_Searchback.txt","w")) ||
-            !(_file_Output_Threshold1 = fopen("threshold1_levels.txt","w")))
+            !(_file_Output_Threshold1 = fopen("threshold1_levels.txt","w")) ||
+            !(_file_Output_Irregularities = fopen("irregularities.txt","w")) ||
+            !(_file_Output_Low_Peaks == fopen("peaks_low.txt","w")))
+    {
         return -1;
+    }
 
     fprintf(_file_Filtered_Output,"Time,Value\n");
     fprintf(_file_Output_Peaks,"Time,Value\n");
@@ -128,9 +134,15 @@ int main()
                         }
 #ifdef PRINT_WARNINGS
                         if(_peak_Value < 2000)
+                        {
                             printf(" WARNING: Low heartpeak");
+                            fprintf(_file_Output_Low_Peaks,"%d,%d",_peak_Time_Stamp,1);
+                        }
                         if(_params->_prone_For_Warning > 5)
+                        {
                             printf(" Warning: Irregular heartbeat");
+                            fprintf(_file_Output_Irregularities,"%d,%d",_peak_Time_Stamp,1);
+                        }
 #endif
                     }
 #ifdef TEST_SESSION
@@ -164,6 +176,8 @@ int main()
     fclose(_file_Output_Peaks);
     fclose(_file_Output_Peaks_Searchback);
     fclose(_file_Output_Threshold1);
+    fclose(_file_Output_Irregularities);
+
 #ifdef TEST_SESSION
 
     _average_Calc_Runtime = _average_Calc_Runtime/_N;
