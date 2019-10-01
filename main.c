@@ -43,6 +43,9 @@ int main()
     fprintf(_file_Output_Peaks,"Time,Value\n");
     fprintf(_file_Output_Peaks_Searchback,"Time,Value\n");
     fprintf(_file_Output_Threshold1,"Time,Value\n");
+    fprintf(_file_Output_Low_Peaks,"Time,Value\n");
+    fprintf(_file_Output_Irregularities,"Time,Value\n");
+
 
     /*
      * Check for OS section
@@ -138,13 +141,13 @@ int main()
                         {
                             _align = 100;
                             printf(" WARNING: Low heartpeak");
-                            fprintf(_file_Output_Low_Peaks,"%d,%d",_peak_Time_Stamp,_p._value + _align);
+                            fprintf(_file_Output_Low_Peaks,"%d,%d\n",_peak_Time_Stamp,_p._value + _align);
                         }
                         if(_params->_prone_For_Warning > 5)
                         {
                             _align += 50;
                             printf(" Warning: Irregular heartbeat");
-                            fprintf(_file_Output_Irregularities,"%d,%d",_peak_Time_Stamp,_p._value + _align);
+                            fprintf(_file_Output_Irregularities,"%d,%d\n",_peak_Time_Stamp,_p._value + _align);
                         }
 #endif
                     }
