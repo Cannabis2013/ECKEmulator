@@ -119,7 +119,7 @@ void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
     int avg = !_is_Searchback ?  average(_params->_RR_AVG2,_params->_AVG2_Len,8) :
                                  average(_params->_RR_AVG1,_params->_AVG1_Len,8);
 
-    _params->_RR_Low = (92*avg)/100;
+    _params->_RR_Low = (80*avg)/100;
     _params->_RR_High = (116*avg)/100;
     _params->_RR_Miss = (166*avg)/100;
 
@@ -169,15 +169,14 @@ void _initialize_Parameters_Noise(QRS_params *_params, Peak _p)
     int _SPKF = _params->_SPKF;
 
     _params->_NPKF = (_p._value + 7*_NPKF)/8;
-    _params->_THRESHOLD1 = _params->_NPKF + (_SPKF - _params->_NPKF)/4;
+    _params->_THRESHOLD1 = _params->_NPKF + (_SPKF - _params->_NPKF)/2;
     _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
 }
 
 int _initialize_QRS_Parameters(QRS_params *_params)
 {
-
     _params->_SPKF = 5000;
-    _params->_NPKF = 4750;
+    _params->_NPKF = 4900;
     _params->_RR_Low = 20;
     _params->_RR_High = 120;
     _params->_RR_Miss = 180;

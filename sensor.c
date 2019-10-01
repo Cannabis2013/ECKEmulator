@@ -92,3 +92,39 @@ int toInteger(char *_data, int total)
 }
 #endif
 
+
+int _initialize_Buffers(Buffer_Array *_buffers)
+{
+    _buffers->_unfiltered_Buffer_Size = 13;
+    _buffers->_LP_Filtered_Buffer_Size = 33;
+    _buffers->_HP_Filtered_Buffer_Size = 5;
+    _buffers->_SQ_Filtered_Buffer_Size = 30;
+    _buffers->_filtered_Buffer_Size = 3;
+    _buffers->_unfiltered_Buffer = NULL;
+    _buffers->_LP_Filtered_Buffer = NULL;
+    _buffers->_HP_Filtered_Buffer = NULL;
+    _buffers->_SQ_Filtered_Buffer = NULL;
+    _buffers->_filtered_Buffer = NULL;
+
+
+    _buffers->_delay = _buffers->_unfiltered_Buffer_Size +
+            _buffers->_LP_Filtered_Buffer_Size +
+            _buffers->_HP_Filtered_Buffer_Size +
+            _buffers->_SQ_Filtered_Buffer_Size;
+
+    if(!(_buffers->_unfiltered_Buffer = malloc((unsigned) _buffers->_unfiltered_Buffer_Size*sizeof (int))) ||
+            !(_buffers->_LP_Filtered_Buffer = malloc((unsigned)_buffers->_LP_Filtered_Buffer_Size*sizeof (int))) ||
+            !(_buffers->_HP_Filtered_Buffer = malloc((unsigned) _buffers->_HP_Filtered_Buffer_Size*sizeof (int))) ||
+            !(_buffers->_SQ_Filtered_Buffer = malloc((unsigned) _buffers->_SQ_Filtered_Buffer_Size*sizeof (int))) ||
+            !(_buffers->_filtered_Buffer = malloc((unsigned) _buffers->_filtered_Buffer_Size*sizeof (int))))
+    {
+        return 0;
+    }
+
+    initializeArray(_buffers->_unfiltered_Buffer,_buffers->_unfiltered_Buffer_Size,0);
+    initializeArray(_buffers->_LP_Filtered_Buffer,_buffers->_LP_Filtered_Buffer_Size,0);
+    initializeArray(_buffers->_HP_Filtered_Buffer,_buffers->_HP_Filtered_Buffer_Size,0);
+    initializeArray(_buffers->_SQ_Filtered_Buffer,_buffers->_SQ_Filtered_Buffer_Size,0);
+
+    return 1;
+}

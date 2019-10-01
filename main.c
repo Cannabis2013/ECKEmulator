@@ -1,9 +1,8 @@
-#include "sensor.h"
 #include "filters.h"
 #include <time.h>
 
 #define PRINT_SESSION
-#define SHOW_WARNINGS
+#define PRINT_WARNINGS
 
 int main()
 {
@@ -60,45 +59,15 @@ int main()
      *      (2) Initialize buffer arrays with initial values to avoid undefined behaviour
      */
 
-    int _unfiltered_Buffer_Size = 13;
-    int *_unfiltered_Buffer = NULL;
-    int _LP_Filtered_Buffer_Size = 33;
-    int *_LP_Filtered_Buffer = NULL;
-    int _HP_Filtered_Buffer_Size = 5;
-    int *_HP_Filtered_Buffer = NULL;
-    int _SQ_Filtered_Buffer_Size = 30;
-    int *_SQ_Filtered_Buffer = NULL;
-
-    int _delay = _unfiltered_Buffer_Size + _LP_Filtered_Buffer_Size +
-            _HP_Filtered_Buffer_Size + _SQ_Filtered_Buffer_Size;
-
-
-    int _filtered_Buffer_Size = 3;
-    int *_filtered_Buffer = NULL;
-
-    if(!(_unfiltered_Buffer = malloc((unsigned) _unfiltered_Buffer_Size*sizeof (int))) ||
-            !(_LP_Filtered_Buffer = malloc((unsigned)_LP_Filtered_Buffer_Size*sizeof (int))) ||
-            !(_HP_Filtered_Buffer = malloc((unsigned) _HP_Filtered_Buffer_Size*sizeof (int))) ||
-            !(_SQ_Filtered_Buffer = malloc((unsigned) _SQ_Filtered_Buffer_Size*sizeof (int))) ||
-            !(_filtered_Buffer = malloc((unsigned) _filtered_Buffer_Size*sizeof (int))))
-    {
-        /*
-         *  Not enough memmory
-         */
-
+    Buffer_Array *_buffers = malloc(sizeof (*_buffers));
+    if(!_initialize_Buffers(_buffers))
         return -1;
-    }
-
-    initializeArray(_unfiltered_Buffer,_unfiltered_Buffer_Size,0);
-    initializeArray(_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size,0);
-    initializeArray(_HP_Filtered_Buffer,_HP_Filtered_Buffer_Size,0);
-    initializeArray(_SQ_Filtered_Buffer,_SQ_Filtered_Buffer_Size,0);
 
     /*
      * Sample section and peak section
      */
 
-    int _overhead =_delay;
+    int _overhead =_buffers->_delay;
     int _sample_Point = 0;
     int _current_R_Peak_Index = 0;
     int _sample_Rate = 250;
@@ -108,25 +77,27 @@ int main()
         int _line_Size = 1;
         int _filtered_Value = 0;
 
-        appendToArray(_unfiltered_Buffer,_unfiltered_Buffer_Size,getNextData(_file_Input,&_line_Size));
+        appendToArray(_buffers->_unfiltered_Buffer,
+                      _buffers->_unfiltered_Buffer_Size,
+                      getNextData(_file_Input,&_line_Size));
 
-        _filtered_Value = lowPassFilter(_unfiltered_Buffer,_unfiltered_Buffer_Size,_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size);
-        appendToArray(_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size,_filtered_Value);
-        _filtered_Value = highPassFilter(_LP_Filtered_Buffer,_LP_Filtered_Buffer_Size,_HP_Filtered_Buffer[4]);
-        appendToArray(_HP_Filtered_Buffer,_HP_Filtered_Buffer_Size,_filtered_Value);
-        _filtered_Value = derivative(_HP_Filtered_Buffer,_HP_Filtered_Buffer_Size);
+        _filtered_Value = lowPassFilter(_buffers);
+        appendToArray(_buffers->_LP_Filtered_Buffer,_buffers->_LP_Filtered_Buffer_Size,_filtered_Value);
+        _filtered_Value = highPassFilter(_buffers,_buffers->_HP_Filtered_Buffer[4]);
+        appendToArray(_buffers->_HP_Filtered_Buffer,_buffers->_HP_Filtered_Buffer_Size,_filtered_Value);
+        _filtered_Value = derivative(_buffers);
         _filtered_Value *= _filtered_Value;
-        appendToArray(_SQ_Filtered_Buffer,_SQ_Filtered_Buffer_Size,_filtered_Value);
-        _filtered_Value = _moving_Window_Integrator(_SQ_Filtered_Buffer,_SQ_Filtered_Buffer_Size);
-        appendToArray(_filtered_Buffer,_filtered_Buffer_Size,_filtered_Value);
+        appendToArray(_buffers->_SQ_Filtered_Buffer,_buffers->_SQ_Filtered_Buffer_Size,_filtered_Value);
+        _filtered_Value = _moving_Window_Integrator(_buffers);
+        appendToArray(_buffers->_filtered_Buffer,_buffers->_filtered_Buffer_Size,_filtered_Value);
 
-        if(_sample_Point >= _delay)
+        if(_sample_Point >= _buffers->_delay)
         {
-            int _time_Points = (_sample_Point - _delay)*1000/_sample_Rate;
+            int _time_Points = (_sample_Point - _buffers->_delay)*1000/_sample_Rate;
 #ifdef TEST_SESSION
             _average_Contribution = clock();
 #endif
-            if(peakDetection(_params,_filtered_Buffer,_time_Points))
+            if(peakDetection(_params,_buffers->_filtered_Buffer,_time_Points))
             {
                 if(_current_R_Peak_Index < _params->_r_Peaks_Size)
                 {
@@ -137,9 +108,8 @@ int main()
 
                         int BPM = 60000/(_params->_RR_AVG1[_params->_AVG1_Len - 1]);
 #ifdef PRINT_SESSION
-                        printf("Time: %d Peak value: %d BPM: %d SB: %d RR_Low: %d RR_Miss: %d\n" ,
-                               _peak_Time_Stamp,_peak_Value,BPM,
-                               _p._found_By_Searchback,_params->_RR_Low, _params->_RR_Miss);
+                        printf("Time: %d Peak value: %d BPM: %d\n" ,
+                               _peak_Time_Stamp,_peak_Value,BPM);
 #endif
                         fprintf(_file_Output_Peaks,"%d, %d \n" ,
                                _peak_Time_Stamp,_peak_Value);
@@ -152,8 +122,12 @@ int main()
                         }
 #ifdef PRINT_SESSION
 #ifdef SHOW_WARNINGS
+#ifdef PRINT_WARNINGS
                         if(_peak_Value < 2000)
                             printf("\nWARNING:\nLow heartpeak detected at time: %d\n\n",_p._time);
+                        if(_params->_prone_For_Warning > 4)
+                            printf("\nWarning:\nIrregularities detected at time: %d\n\n", _time_Points);
+#endif
 #endif
 #endif
                     }
@@ -168,14 +142,10 @@ int main()
 #endif
 
 #ifdef PRINT_SESSION
-#ifdef SHOW_WARNINGS
-                if(_params->_prone_For_Warning > 4)
-                    printf("\nWarning:\nIrregularities detected at time: %d\n\n", _time_Points);
-#endif
 #endif
             }
 
-            fprintf(_file_Filtered_Output," %d,%d\n",_time_Points -4*2,_filtered_Buffer[0]);
+            fprintf(_file_Filtered_Output," %d,%d\n",_time_Points -4*2,_buffers->_filtered_Buffer[0]);
             int _threshold1_Value = _params->_THRESHOLD1;
             fprintf(_file_Output_Threshold1,"%d,%d\n",_time_Points - 4*2,_threshold1_Value);
         }
