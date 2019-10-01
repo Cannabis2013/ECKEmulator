@@ -51,6 +51,7 @@ void appendPeak(Peak *_peaks, int _peaks_Size, Peak _new_Peak);
 
 void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback);
 void _initialize_Parameters_Noise(QRS_params *_params, Peak _p);
+void _initialize_Parameters_Not_noise(QRS_params *_params, Peak _p);
 int _initialize_QRS_Parameters(QRS_params *_params);
 bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp);
 

@@ -33,6 +33,11 @@ int main()
             !(_file_Output_Threshold1 = fopen("threshold1_levels.txt","w")))
         return -1;
 
+    fprintf(_file_Filtered_Output,"Time,Value\n");
+    fprintf(_file_Output_Peaks,"Time,Value\n");
+    fprintf(_file_Output_Peaks_Searchback,"Time,Value\n");
+    fprintf(_file_Output_Threshold1,"Time,Value\n");
+
     /*
      * Check for OS section
      *  - This code only works in linux/unix compliant systems
@@ -124,9 +129,9 @@ int main()
                         }
 #ifdef PRINT_WARNINGS
                         if(_peak_Value < 2000)
-                            printf(" WARNING: Low heartpeak detected at time: %d",_peak_Time_Stamp);
+                            printf(" WARNING: Low heartpeak");
                         if(_params->_prone_For_Warning > 5)
-                            printf(" Warning: Irregularities detected at time: %d", _peak_Time_Stamp);
+                            printf(" Warning: Irregular heartbeat");
 #endif
                     }
 #ifdef TEST_SESSION
