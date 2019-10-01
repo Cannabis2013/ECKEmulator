@@ -80,6 +80,7 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
             }
             _expand_Array(1,&_params->_r_Peaks_Size,_P,_params);
             _initialize_Parameters_R(_params,_P,true);
+            _params->_prone_For_Warning = 0;
             return true;
         }
 

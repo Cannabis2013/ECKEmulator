@@ -149,6 +149,7 @@ int main()
                             printf(" Warning: Irregular heartbeat");
                             fprintf(_file_Output_Irregularities,"%d,%d\n",_peak_Time_Stamp,_p._value + _align);
                         }
+
 #endif
                     }
 #ifdef TEST_SESSION
