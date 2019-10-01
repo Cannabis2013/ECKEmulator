@@ -39,6 +39,11 @@ int main()
      *  - It should be noted that we have experienced issues on OSX related to the outputs
      */
 
+    fprintf(_file_Output_Peaks,"Time,Value\n");
+    fprintf(_file_Filtered_Output,"Time,Value\n");
+    fprintf(_file_Output_Threshold1,"Time,Value\n");
+    fprintf(_file_Output_Peaks_Searchback,"Time,Value\n");
+
 #ifdef _WIN64
     return -1;
 #endif
@@ -108,7 +113,7 @@ int main()
 
                         int BPM = 60000/(_params->_RR_AVG1[_params->_AVG1_Len - 1]);
 #ifdef PRINT_SESSION
-                        printf("Time: %d Peak value: %d BPM: %d\n" ,
+                        printf("\nTime: %d Peak value: %d BPM: %d" ,
                                _peak_Time_Stamp,_peak_Value,BPM);
 #endif
                         fprintf(_file_Output_Peaks,"%d, %d \n" ,
@@ -121,13 +126,11 @@ int main()
                                    _peak_Time_Stamp,_peak_Value);
                         }
 #ifdef PRINT_SESSION
-#ifdef SHOW_WARNINGS
 #ifdef PRINT_WARNINGS
                         if(_peak_Value < 2000)
-                            printf("\nWARNING:\nLow heartpeak detected at time: %d\n\n",_p._time);
+                            printf(" - WARNING: Low heartpeak detected at time: %d",_p._time);
                         if(_params->_prone_For_Warning > 4)
-                            printf("\nWarning:\nIrregularities detected at time: %d\n\n", _time_Points);
-#endif
+                            printf(" - Warning: Irregularities detected at time: %d", _p._time);
 #endif
 #endif
                     }
