@@ -34,7 +34,7 @@ int main()
             !(_file_Output_Peaks_Searchback = fopen("peaks_Searchback.txt","w")) ||
             !(_file_Output_Threshold1 = fopen("threshold1_levels.txt","w")) ||
             !(_file_Output_Irregularities = fopen("irregularities.txt","w")) ||
-            !(_file_Output_Low_Peaks == fopen("peaks_low.txt","w")))
+            !(_file_Output_Low_Peaks = fopen("peaks_low.txt","w")))
     {
         return -1;
     }
