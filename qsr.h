@@ -18,6 +18,7 @@ typedef struct Peak
     int _value;
     int _time;
     int _found_By_Searchback;
+    int _candiate;
 }Peak;
 
 typedef struct QRS_params
@@ -35,6 +36,7 @@ typedef struct QRS_params
    int *_RR_AVG2;
    int _last_Peak_Position;
    int _current_Average;
+   int _current_Interval;
    int _prone_For_Warning;
 
    int _r_Peaks_Size;

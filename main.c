@@ -112,8 +112,7 @@ int main()
                         Peak _p = _params->_r_Peaks[_current_R_Peak_Index++];
                         int _peak_Time_Stamp = _p._time;
                         int _peak_Value = _p._value;
-
-                        int BPM = 60000/(_params->_RR_AVG2[_params->_AVG2_Len - 1]);
+                        int BPM = 60000/(_params->_current_Interval);
 #ifdef PRINT_SESSION
                         printf("\nTime: %d Peak value: %d BPM: %d" ,
                                _peak_Time_Stamp,_peak_Value,BPM);

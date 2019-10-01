@@ -49,16 +49,12 @@ bool peakDetection(QRS_params *_params, const int * _buffer, int _time_Stamp)
     int _next = _buffer[2];
     int _current_RR_Interval = (_time_Stamp - 4) - _last_Peak_Position;
 
-    if(_time_Stamp == 19568)
-    {
-        int a = 0;
-    }
-
     if(_peak_Candidate > _preceding && _peak_Candidate > _next)
     {
         Peak _p;
         _p._time = _time_Stamp - 4;
         _p._value = _peak_Candidate;
+        _p._candiate = _p._value > _params->_THRESHOLD2 ? 1 : 0;
 
         _initialize_Parameters_Noise(_params,_p);
 
@@ -116,7 +112,7 @@ Peak _searchback_Operation(QRS_params *_params, int _is_Searchback)
         int _peak_Interval = _n_Peak._time - _last_Peak_Position;
         int _threshold =  _is_Searchback ? _params->_THRESHOLD2 : _params->_THRESHOLD1;
 
-        if(_n_Peak._value > _threshold)
+        if(_n_Peak._value > _threshold && _n_Peak._candiate)
         {
             if(_peak_Interval < _params->_RR_Low || _peak_Time < _last_Peak_Position)
                 break;
@@ -142,15 +138,15 @@ void _initialize_Parameters_R(QRS_params *_params, Peak _p, bool _is_Searchback)
     int avg = _is_Searchback ? average(_params->_RR_AVG1,_params->_AVG1_Len,8):
                                average(_params->_RR_AVG2,_params->_AVG2_Len,8);
 
-    _params->_RR_Low = (91*avg)/100;
+    _params->_RR_Low = (80*avg)/100;
     _params->_RR_High = (116*avg)/100;
-    _params->_RR_Miss = (166*avg)/100;
+    _params->_RR_Miss = (140*avg)/100;
 
     _params->_current_Average = avg;
 
     _params->_THRESHOLD1 = _params->_NPKF + (_params->_SPKF - _params->_NPKF)/4;
     _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
-
+    _params->_current_Interval = _current_RR_Interval;
     _params->_last_Peak_Position = _p._time;
 }
 
@@ -178,16 +174,17 @@ void _initialize_Parameters_Not_noise(QRS_params *_params, Peak _p)
 int _initialize_QRS_Parameters(QRS_params *_params)
 {
     _params->_SPKF = 5000;
-    _params->_NPKF = 4500;
+    _params->_NPKF = 4900;
     _params->_RR_Low = 20;
     _params->_RR_High = 120;
     _params->_RR_Miss = 180;
-    _params->_THRESHOLD1 = 4500;
+    _params->_THRESHOLD1 = 5000;
     _params->_THRESHOLD2 = _params->_THRESHOLD1/2;
     _params->_last_Peak_Position = 0;
     _params->_AVG1_Len = 8;
     _params->_AVG2_Len = 8;
     _params->_current_Average = 0;
+    _params->_current_Interval = 0;
     _params->_r_Peaks_Size = 0;
     _params->_n_Peaks_Size = 0;
     _params->_prone_For_Warning = 0;
